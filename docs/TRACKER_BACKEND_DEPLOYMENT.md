@@ -107,6 +107,8 @@ Create the OAuth client:
 
 The active local `gcloud` project may be unrelated. On 2026-06-08 it was `workout-app-56f96`, so do not rely on the active CLI project for tracker OAuth setup.
 
+Do not use `gcloud iam oauth-clients create` for this Chrome extension. That command creates IAM OAuth client resources with `public-client` / `confidential-client` types, not Google Auth Platform Chrome Extension clients tied to an extension Item ID. `gcloud iap oauth-clients create` is also wrong; it creates Cloud IAP OAuth clients. As of the checked Google Cloud CLI version `569.0.0`, the Chrome Extension OAuth client type still needs the Google Auth Platform Clients UI.
+
 Build with the Google OAuth client ID:
 
 ```bash
