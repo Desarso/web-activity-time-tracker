@@ -89,7 +89,7 @@ export const POMODORO_AUDIO_AFTER_WORK_DEFAULT = PomodoroSounds['Sound 3'];
 export const POMODORO_AUDIO_AFTER_REST_DEFAULT = PomodoroSounds['Sound 8'];
 export const POMODORO_AUDIO_AFTER_FINISHED_DEFAULT = PomodoroSounds['Sound 10'];
 export const SYNC_ENABLED_DEFAULT = false;
-export const SYNC_API_BASE_URL_DEFAULT = 'http://localhost:8787';
+export const SYNC_API_BASE_URL_DEFAULT = 'https://tracker.gabrielmalek.com';
 
 export function getDefaultValue(param: StorageParams) {
   switch (param) {

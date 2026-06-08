@@ -50,23 +50,27 @@ export async function signInWithGoogle(): Promise<SyncSession> {
 
 async function getGoogleAccessToken(): Promise<string> {
   const identity = Browser.identity as IdentityWithGoogleAuth;
+  const googleClientId = getGoogleClientId();
+
+  if (isPlaceholderGoogleClientId(googleClientId)) {
+    throw new Error(getGoogleOAuthSetupMessage());
+  }
 
   if (identity?.getAuthToken) {
-    const tokenResult = await identity.getAuthToken({
-      interactive: true,
-      scopes: GOOGLE_SCOPES,
-    });
-    const accessToken = typeof tokenResult === 'string' ? tokenResult : tokenResult?.token;
-    if (accessToken) return accessToken;
+    try {
+      const tokenResult = await identity.getAuthToken({
+        interactive: true,
+        scopes: GOOGLE_SCOPES,
+      });
+      const accessToken = typeof tokenResult === 'string' ? tokenResult : tokenResult?.token;
+      if (accessToken) return accessToken;
+    } catch (error) {
+      throw normalizeGoogleAuthError(error);
+    }
   }
 
   if (!identity?.launchWebAuthFlow || !identity?.getRedirectURL) {
     throw new Error('This browser does not expose an extension identity API.');
-  }
-
-  const googleClientId = getGoogleClientId();
-  if (!googleClientId || googleClientId.startsWith('REPLACE_WITH_')) {
-    throw new Error('Configure the Google OAuth client ID in src/manifest.json before signing in.');
   }
 
   const redirectUri = identity.getRedirectURL('google');
@@ -156,6 +160,26 @@ function getGoogleClientId(): string {
   return String((Browser.runtime.getManifest() as { oauth2?: { client_id?: string } }).oauth2?.client_id || '');
 }
 
+function isPlaceholderGoogleClientId(clientId: string): boolean {
+  return !clientId || clientId.startsWith('REPLACE_WITH_') || clientId.includes('your-client-id');
+}
+
+function getGoogleOAuthSetupMessage(): string {
+  return `Google sign-in needs an OAuth client for extension ID ${getExtensionId()}. Set VITE_GOOGLE_OAUTH_CLIENT_ID, rebuild, reload the extension, and include the same client ID in GOOGLE_OAUTH_CLIENT_IDS for the backend.`;
+}
+
+function normalizeGoogleAuthError(error: unknown): Error {
+  const message = error instanceof Error ? error.message : String(error || '');
+  if (/bad client id|invalid_client|oauth2 request failed/i.test(message)) {
+    return new Error(getGoogleOAuthSetupMessage());
+  }
+  return error instanceof Error ? error : new Error(message || 'Google sign-in failed.');
+}
+
+function getExtensionId(): string {
+  return String((Browser.runtime as typeof Browser.runtime & { id?: string }).id || 'this extension');
+}
+
 async function requestJson<T>(
   path: string,
   options: RequestInit & { auth?: boolean },
@@ -169,10 +193,16 @@ async function requestJson<T>(
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const response = await fetch(`${await getSyncApiBaseUrl()}${path}`, {
-    ...options,
-    headers,
-  });
+  const apiBaseUrl = await getSyncApiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${apiBaseUrl}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(`Cannot reach sync backend at ${apiBaseUrl}. Start the backend, then try again.`);
+  }
 
   const json = await response.json().catch(() => null);
   if (!response.ok) {

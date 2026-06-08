@@ -15,7 +15,7 @@
 Web Activity Time Tracker keeps track of how much time you spend on the web and presents the stats in a useful and intuitive way. 
 You can set a daily visit limit for sites and block it after the expiration of the limit. 
 
-The development version can sync activity across multiple browsers and devices through the optional local backend in `backend/`.
+The development version can sync activity across multiple browsers and devices through the backend in `backend/`. The shared backend target is `https://tracker.gabrielmalek.com`.
 
 ![image](https://user-images.githubusercontent.com/23387046/206865140-875bf7ab-a59e-42e3-bb9e-e348e8b85749.png) ![image](https://user-images.githubusercontent.com/23387046/206865174-aa409efe-495d-450e-a8ea-1d97024c9e23.png)
 
@@ -41,6 +41,7 @@ Web Activity Time Tracker is available via the official [Chrome Web Store](https
 
 ```bash
 corepack pnpm@8.15.9 install
+VITE_GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com \
 corepack pnpm@8.15.9 exec vite build --mode development
 ```
 
@@ -73,7 +74,17 @@ GOOGLE_OAUTH_CLIENT_IDS=your-client-id.apps.googleusercontent.com \
 corepack pnpm@8.15.9 backend
 ```
 
-Google login needs a real OAuth client ID in `src/manifest.json`.
+The extension defaults to `https://tracker.gabrielmalek.com`. Set `VITE_SYNC_API_BASE_URL=http://localhost:8787` before building if you want a local-only test build.
+
+Google login needs a Google OAuth Chrome Extension/Chrome App client for the stable local development extension ID:
+
+```text
+bkiifobeblghdofgfbpakgoknebdkeec
+```
+
+Set `VITE_GOOGLE_OAUTH_CLIENT_ID` before building the extension and pass the same client ID in `GOOGLE_OAUTH_CLIENT_IDS` when starting the backend.
+
+Backend deployment notes are in [docs/TRACKER_BACKEND_DEPLOYMENT.md](docs/TRACKER_BACKEND_DEPLOYMENT.md).
 
 # License
 

@@ -7,6 +7,7 @@ Use this when installing the development build on another computer or browser.
 ```bash
 corepack enable
 corepack pnpm@8.15.9 install
+VITE_GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com \
 corepack pnpm@8.15.9 exec vite build --mode development
 ```
 
@@ -16,9 +17,32 @@ The unpacked extension folder is:
 dist
 ```
 
+The development build uses this stable local extension ID across machines:
+
+```text
+bkiifobeblghdofgfbpakgoknebdkeec
+```
+
+If an older unpacked build was already loaded with another ID, remove it from the browser and load the rebuilt `dist` folder again.
+
 For active development, keep this running:
 
 ```bash
+VITE_GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com \
+corepack pnpm@8.15.9 dev
+```
+
+The normal development build points sync traffic at:
+
+```text
+https://tracker.gabrielmalek.com
+```
+
+For a local-only backend test build:
+
+```bash
+VITE_GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com \
+VITE_SYNC_API_BASE_URL=http://localhost:8787 \
 corepack pnpm@8.15.9 dev
 ```
 
@@ -58,27 +82,40 @@ GOOGLE_OAUTH_CLIENT_IDS=your-client-id.apps.googleusercontent.com \
 corepack pnpm@8.15.9 backend
 ```
 
-The extension defaults to:
+The hosted extension default is:
 
 ```text
-http://localhost:8787
+https://tracker.gabrielmalek.com
+```
+
+For local-only testing, rebuild with:
+
+```text
+VITE_SYNC_API_BASE_URL=http://localhost:8787
 ```
 
 The backend stores local JSON data under `backend/data`, which is gitignored.
 
+Hosted backend deployment notes live in `docs/TRACKER_BACKEND_DEPLOYMENT.md`.
+
 ## Google Login
 
-Before sign-in works, replace the placeholder in `src/manifest.json`:
+Before sign-in works, create a Google OAuth client for the local extension:
 
-```json
-"client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
-```
+1. In Google Cloud Console, open APIs & Services.
+2. Configure the OAuth consent screen for a personal/internal test app.
+3. Create an OAuth client for a Chrome Extension/Chrome App.
+4. Use this extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`.
+5. Rebuild with `VITE_GOOGLE_OAUTH_CLIENT_ID=<client-id>`.
+6. Reload the unpacked extension in every browser.
 
-Create OAuth clients for each extension ID/browser variant you use, then pass all client IDs to the backend as a comma-separated list:
+Pass the same client ID to the backend. If you later create different clients for browser variants, pass all client IDs as a comma-separated list:
 
 ```bash
 GOOGLE_OAUTH_CLIENT_IDS=chrome-client.apps.googleusercontent.com,edge-client.apps.googleusercontent.com
 ```
+
+The source manifest keeps a placeholder client ID on purpose. The Vite build replaces it in `dist/manifest.json` when `VITE_GOOGLE_OAUTH_CLIENT_ID` is set.
 
 ## Incognito
 

@@ -25,8 +25,9 @@
     "identity"
   ],
   "host_permissions": [
+    "https://tracker.gabrielmalek.com/*",
     "http://localhost:8787/*",
-    "https://*.webtracker.online/*"
+    "http://127.0.0.1:8787/*"
   ],
   "oauth2": {
     "client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",

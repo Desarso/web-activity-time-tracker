@@ -6,12 +6,22 @@ Local development:
 TRACKER_SESSION_SECRET=change-me pnpm backend
 ```
 
-The extension talks to `http://localhost:8787` by default. For production, set:
+The hosted backend target is:
+
+```text
+https://tracker.gabrielmalek.com
+```
+
+The extension defaults to that hosted URL. For local-only testing, build the extension with `VITE_SYNC_API_BASE_URL=http://localhost:8787`.
+
+For production, set:
 
 - `PORT`
 - `TRACKER_SESSION_SECRET`
 - `GOOGLE_OAUTH_CLIENT_IDS` as a comma-separated list for Chrome, Edge, and dev extension OAuth clients
 - `TRACKER_DATA_DIR` or `TRACKER_DATA_FILE`
+
+The repo root `Dockerfile` runs this backend on port `8787` and stores persistent JSON data under `/data`.
 
 Auth flow:
 
