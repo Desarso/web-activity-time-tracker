@@ -124,13 +124,14 @@ function drawIntervalChart(data: DataForChart[]) {
     .style('opacity', 0)
     .style('display', 'none')
     .style('position', 'absolute')
-    .style('background-color', 'white')
-    .style('color', 'black')
-    .style('border', '1px solid grey')
+    .style('background-color', darkMode.value ? '#18181b' : '#ffffff')
+    .style('color', darkMode.value ? '#f4f4f5' : '#11181c')
+    .style('border', `1px solid ${darkMode.value ? '#3f3f46' : '#e4e4e7'}`)
     .attr('class', 'tooltip')
     .style('border-width', '1px')
-    .style('border-radius', '3px')
-    .style('padding', '5px');
+    .style('border-radius', '12px')
+    .style('box-shadow', '0 12px 32px rgba(15, 23, 42, 0.1)')
+    .style('padding', '8px 10px');
 
   const mouseover = function (e: any) {
     tooltip.style('opacity', 1).style('display', 'block');
@@ -180,7 +181,7 @@ function drawIntervalChart(data: DataForChart[]) {
     .data(data)
     .enter()
     .append('rect')
-    .style('fill', '#5668e2')
+    .style('fill', '#006fee')
     .style('cursor', 'pointer')
     .style('stroke-width', '1')
     .attr('class', 'bar')
@@ -234,15 +235,15 @@ function drawIntervalChart(data: DataForChart[]) {
 <style scoped>
 .block {
   display: inline-block;
-  border: 1px rgb(197, 197, 197) solid;
-  background-color: white;
+  border: 1px var(--hero-default-200) solid;
+  background-color: var(--hero-content1);
   height: 40px;
   width: 40px;
 }
 
 .grid line {
-  stroke: gray;
+  stroke: var(--hero-default-400);
   stroke-opacity: 0.2;
-  color: black;
+  color: var(--hero-foreground);
 }
 </style>

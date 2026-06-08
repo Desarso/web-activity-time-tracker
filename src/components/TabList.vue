@@ -7,18 +7,22 @@
       {{ t('noData.message') }}
     </div>
     <div v-else>
-      <OverallStatistics v-if="isShowOverallStats" :data="dataForOvarallStats" />
+      <OverallStatistics
+        v-if="isShowOverallStats && dataForOvarallStats"
+        :data="dataForOvarallStats"
+      />
       <DonutChart
         :time="timeForChart"
         :labels="sitesForChart"
-        v-if="type != TypeOfList.Dashboard"
+        v-if="type != TypeOfList.Dashboard && timeForChart && sitesForChart"
       />
       <TabItemHeader
         :listType="type"
-        :summaryTime="summaryTime"
+        :scope="scope"
+        :summaryTime="summaryTime || 0"
         :countOfSites="countOfSites"
         :firstDay="firstDay"
-        :countOfActiveDays="countOfActiveDays"
+        :countOfActiveDays="countOfActiveDays || 0"
         @sortingBy="sorting"
       />
 
@@ -27,7 +31,7 @@
         :key="i"
         :item="getItem(tab)"
         :listType="type"
-        :summaryTimeForWholeDay="summaryTime"
+        :summaryTimeForWholeDay="summaryTime || 0"
       />
 
       <div class="show-all" v-if="showOnlyFirst100Items">
@@ -51,7 +55,7 @@ import TabItemHeader from '../components/TabItemHeader.vue';
 import DonutChart from '../components/DonutChart.vue';
 import OverallStatistics from '../components/OverallStatistics.vue';
 import { Tab } from '../entity/tab';
-import { SortingBy, TypeOfList } from '../utils/enums';
+import { ActivityScope, SortingBy, TypeOfList } from '../utils/enums';
 import { useTodayTabListSummary } from '../functions/useTodayTabListSummary';
 import { useAllTabListSummary } from '../functions/useAllTabListSummary';
 import { CurrentTabItem } from '../dto/currentTabItem';
@@ -63,9 +67,11 @@ const { t } = useI18n();
 const props = defineProps<{
   type: TypeOfList;
   showAllStats: boolean;
+  scope?: ActivityScope;
 }>();
 
 const isShowOverallStats = computed(() => props.showAllStats && props.type == TypeOfList.All);
+const scope = computed(() => props.scope ?? ActivityScope.Normal);
 
 let loadedTabs: Tab[] = [];
 const tabs = ref<Tab[]>();
@@ -91,9 +97,9 @@ function showAllWebSites() {
 async function loadList(sortingBy: SortingBy) {
   let tabSummary = null;
   if (props.type == TypeOfList.Today || props.type == TypeOfList.Dashboard)
-    tabSummary = await useTodayTabListSummary(sortingBy);
+    tabSummary = await useTodayTabListSummary(sortingBy, scope.value);
   if (props.type == TypeOfList.All) {
-    tabSummary = await useAllTabListSummary(sortingBy);
+    tabSummary = await useAllTabListSummary(sortingBy, scope.value);
 
     if (tabSummary != null) {
       firstDay.value = tabSummary.firstDay;
@@ -137,6 +143,7 @@ function getItem(tab: Tab): CurrentTabItem {
         : tab.summaryTime,
     favicon: tab.favicon,
     url: tab.url,
+    incognito: tab.incognito,
     sessions:
       props.type == TypeOfList.Today || props.type == TypeOfList.Dashboard
         ? tab.days.find(day => day.date === todayLocalDate())!.counter
@@ -153,15 +160,18 @@ onMounted(async () => {
 <style scoped>
 .show-all {
   text-align: center;
-  padding-bottom: 10px;
+  padding: 12px 0 16px;
 }
 
 .show-all button {
-  background-color: aliceblue;
-  border-radius: 5px;
-  border: 1px rgb(202, 202, 202) solid;
+  background-color: var(--hero-content1);
+  color: var(--hero-primary);
+  border-radius: var(--hero-radius-md);
+  border: 1px solid var(--hero-default-200);
   font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  padding: 5px 25px;
+  padding: 9px 25px;
+  box-shadow: var(--hero-shadow-sm);
 }
 </style>

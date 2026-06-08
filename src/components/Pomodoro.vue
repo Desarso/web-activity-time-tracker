@@ -6,9 +6,9 @@
   <div class="explanation-block">
     <p class="explanation">
       {{ t('pomodoroExplanationIcon.message') }}
-      <span><img class="ml-5" src="../assets/icons/pomodoro.png" height="30" /></span>.
+      <span class="inline-status-icon work"><TablerIcon name="clock-play" :size="18" /></span>.
       {{ t('pomodoroExplanationIcon.description') }}
-      <img class="ml-5" src="../assets/icons/pomodoro-rest.png" height="30" />.
+      <span class="inline-status-icon rest"><TablerIcon name="hourglass-empty" :size="18" /></span>.
     </p>
     <p class="explanation">
       {{ t('pomodoroExplanationTime.message') }}
@@ -55,8 +55,8 @@
     :class="[isEnabled ? 'stop' : 'start', isDisabled ? 'disabled' : '']"
     @click="changeStatus()"
   >
-    <img v-if="isEnabled" class="ml-5" src="../assets/icons/stop.svg" height="20" />
-    <img v-if="!isEnabled" class="ml-5" src="../assets/icons/start.svg" height="22" />
+    <TablerIcon v-if="isEnabled" name="player-stop" :size="20" />
+    <TablerIcon v-if="!isEnabled" name="player-play" :size="20" />
     {{ !isEnabled ? t('start.message') : t('stop.message') }}
   </button>
 </template>
@@ -88,6 +88,7 @@ import { useBadge, BadgeColor, BadgeIcon } from '../functions/useBadge';
 import { PomodoroSounds } from '../utils/pomodoro';
 import PomodoroSoundsSelector from '../components/PomodoroSoundsSelector.vue';
 import Browser from 'webextension-polyfill';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 const settingsStorage = injectStorage();
@@ -195,6 +196,8 @@ function playAudio(sound: PomodoroSounds) {
   display: flex;
   justify-content: start;
   align-items: center;
+  min-height: 54px;
+  padding: 8px 0;
 }
 .date-picker {
   width: 120px;
@@ -212,42 +215,70 @@ function playAudio(sound: PomodoroSounds) {
 .blocked {
   display: inline-block;
   font-size: 13px;
-  color: gray;
+  color: var(--hero-default-500);
   margin-left: 55px;
   margin-top: 5px;
 }
+
+.inline-status-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  border-radius: var(--hero-radius-md);
+  vertical-align: middle;
+}
+
+.inline-status-icon.work {
+  background: var(--hero-primary-50);
+  color: var(--hero-primary);
+}
+
+.inline-status-icon.rest {
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--hero-success);
+}
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: none;
   color: #fff;
-  border-radius: 7px;
-  height: 36px;
-  line-height: 35px;
+  border-radius: var(--hero-radius-md);
+  min-height: 42px;
+  line-height: 42px;
   padding: 0 20px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 800;
   cursor: pointer;
   min-width: 80px;
   text-align: center;
   width: 200px;
+  box-shadow: var(--hero-shadow-sm);
 }
 button.start {
-  background-color: rgb(62, 148, 62) !important;
+  background-color: var(--hero-success) !important;
 }
 button.stop {
-  background-color: rgb(191, 59, 59) !important;
+  background-color: var(--hero-danger) !important;
 }
 .explanation-block {
   margin: 10px 0;
   padding: 15px;
-  background-color: #d7d7ff;
-  border-radius: 10px;
+  background-color: var(--hero-primary-soft);
+  border: 1px solid rgba(0, 111, 238, 0.18);
+  border-radius: var(--hero-radius-lg);
 }
 .explanation-block .explanation {
   font-size: 15px;
-  color: black;
+  color: var(--hero-foreground);
+  line-height: 1.5;
 }
 .disabled {
-  border-radius: 10px;
+  border-radius: var(--hero-radius-lg);
   pointer-events: none;
   opacity: 0.5;
 }

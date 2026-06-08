@@ -4,12 +4,14 @@ import { logger } from '../utils/logger';
 export class Tab implements ISerializable<Tab> {
   url: string = '';
   favicon: string | undefined = '';
+  incognito: boolean = false;
   summaryTime: number = 0;
   counter: number = 0;
   days: TabDay[] = [];
 
-  init(url: string) {
+  init(url: string, incognito = false) {
     this.url = url;
+    this.incognito = incognito;
   }
 
   incSummaryTime(): void {
@@ -41,6 +43,7 @@ export class Tab implements ISerializable<Tab> {
 
   deserialize(input: Tab) {
     this.url = input.url;
+    this.incognito = input.incognito === true;
     this.counter = input.counter;
     this.favicon = input.favicon;
     this.summaryTime = input.summaryTime;

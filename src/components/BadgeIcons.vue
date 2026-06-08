@@ -40,19 +40,21 @@ const showLimitBadge = computed(
 
 <style scoped>
 span.badge-document {
-  border-radius: 6px;
-  background-color: #0043ff9e;
-  padding: 3px 7px;
+  border-radius: 999px;
+  background-color: var(--hero-primary-soft);
+  border: 1px solid rgba(0, 111, 238, 0.22);
+  padding: 3px 8px;
   font-size: 11px;
-  color: white;
-  font-weight: 600;
+  color: var(--hero-primary);
+  font-weight: 850;
 }
 span.badge-block {
-  border-radius: 6px;
-  background-color: #ff0000c0;
-  padding: 3px 7px;
+  border-radius: 999px;
+  background-color: var(--hero-danger-soft);
+  border: 1px solid rgba(243, 18, 96, 0.22);
+  padding: 3px 8px;
   font-size: 11px;
-  color: white;
-  font-weight: 600;
+  color: var(--hero-danger);
+  font-weight: 850;
 }
 </style>

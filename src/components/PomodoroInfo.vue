@@ -44,26 +44,34 @@ onMounted(async () => {
 
 <style scoped>
 .pomodoro-popup-block {
-  width: -webkit-fill-available;
+  width: calc(100% - 24px);
   position: fixed;
-  bottom: 0;
-  padding: 8px 10px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 12px 14px;
   font-size: 14px;
-  background-color: #efefef;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-md);
+  backdrop-filter: blur(12px);
 }
 .pomodoro-popup-block p {
   display: inline-block;
-  margin: 8px;
-  font-size: 17px;
-  font-weight: 500;
+  margin: 9px 8px;
+  color: var(--hero-foreground);
+  font-size: 15px;
+  font-weight: 850;
 }
 .pomodoro-popup-block span {
-  padding: 5px;
-  background-color: rgb(105, 202, 105);
-  color: black;
+  padding: 6px 10px;
+  background-color: var(--hero-success-soft);
+  border: 1px solid rgba(23, 201, 100, 0.22);
+  color: var(--hero-success);
   margin-left: 5px;
-  border-radius: 5px;
-  font-weight: 500;
+  border-radius: 999px;
+  font-weight: 850;
   font-size: 13px;
 }
 .pomodoro-popup-block input[type='button'] {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="donation-panel">
     <p class="title">
       {{ t('enjoy.message') }}
     </p>
@@ -42,5 +42,23 @@ p {
 }
 .title {
   font-size: 18px !important;
+  font-weight: 850;
+  color: var(--hero-foreground);
+}
+.donation-panel {
+  padding: 22px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
+}
+.donation-panel p {
+  color: var(--hero-default-500);
+  line-height: 1.5;
+}
+.donation-panel img {
+  border-radius: var(--hero-radius-lg);
+  border: 1px solid var(--hero-default-200);
+  box-shadow: var(--hero-shadow-sm);
 }
 </style>

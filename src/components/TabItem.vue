@@ -9,23 +9,21 @@
       <div class="first-block">
         <div>
           <p class="url">{{ url }}</p>
+          <span v-if="item.incognito" class="private-chip">
+            <TablerIcon name="spy" :size="14" />
+            Private
+          </span>
           <BadgeIcons :url="url" :type="typeOfUrl" :listType="listType" />
-          <p class="links" v-if="isShowCmdButtons" title="Statistics">
-            <img
-              class="link"
-              src="../assets/icons/details-link.svg"
-              height="21"
-              @click="openStats(item.url)"
-            />
+          <p class="links" v-if="isShowCmdButtons && !item.incognito" title="Statistics">
+            <button class="link" type="button" @click="openStats(item.url)">
+              <TablerIcon name="chart-bar" :size="18" />
+            </button>
           </p>
 
           <p class="links" v-if="isShowCmdButtons" title="Open website">
-            <img
-              class="link"
-              src="../assets/icons/open-link.svg"
-              height="21"
-              @click="openUrl(item.url)"
-            />
+            <button class="link" type="button" @click="openUrl(item.url)">
+              <TablerIcon name="external-link" :size="18" />
+            </button>
           </p>
         </div>
         <p class="text-right time">{{ summaryTimeForTab }}</p>
@@ -61,6 +59,7 @@ import { CurrentTabItem } from '../dto/currentTabItem';
 import { SettingsTab, TypeOfList, TypeOfUrl } from '../utils/enums';
 import { openPage } from '../utils/open-page';
 import { getTypeOfUrl } from '../utils/get-type-of-url';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -107,16 +106,24 @@ const showWarningMessage = ref<boolean>();
 
 <style scoped>
 .tab-item {
-  padding: 7px;
-  border: 1px transparent solid;
-  border-radius: 10px;
-  margin: 5px 15px;
+  padding: 12px;
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  margin: 8px 16px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  background: var(--hero-content1);
+  box-shadow: var(--hero-shadow-sm);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
 }
 .tab-item:hover {
-  border: 1px rgb(202, 202, 202) solid;
+  border-color: rgba(0, 111, 238, 0.28);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
 }
 
 .tab-item .links {
@@ -126,33 +133,65 @@ const showWarningMessage = ref<boolean>();
   margin: 0 5px;
 }
 .tab-item .links .link {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
+  color: var(--hero-default-500);
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: 8px;
+  cursor: pointer;
 }
 .tab-item .url {
+  color: var(--hero-foreground);
   font-size: 15px;
+  font-weight: 750;
   cursor: pointer;
   overflow-wrap: anywhere;
   display: inline-block;
 }
 .tab-item .url:hover {
-  color: rgb(99, 99, 243);
+  color: var(--hero-primary);
+}
+.private-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  margin-left: 8px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--hero-warning);
+  background: var(--hero-warning-soft);
+  border: 1px solid rgba(245, 165, 36, 0.22);
+  font-size: 12px;
+  font-weight: 850;
+  vertical-align: middle;
 }
 .tab-item p {
   margin: 5px;
 }
 .tab-item .time {
+  color: var(--hero-foreground);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
+  white-space: nowrap;
 }
 .tab-item .progress-bar {
   width: 100%;
   margin: 5px 0 0 5px;
-  border-radius: 10px;
-  border: 1.5px rgb(225 224 224) solid;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--hero-default-200);
+  background: var(--hero-default-100);
 }
 .tab-item .progress-bar div {
   height: 6px;
-  background-color: var(--progress-bar);
+  background: linear-gradient(90deg, var(--hero-primary), #17c964);
+  border-radius: 999px;
 }
 .flex-grow-2 {
   flex-grow: 2;
@@ -169,11 +208,16 @@ const showWarningMessage = ref<boolean>();
 .tab-item .percent {
   white-space: nowrap;
   margin: 0 5px 0 20px;
+  color: var(--hero-default-500);
+  font-weight: 700;
 }
 .tab-item .sessions {
   margin: 0 0 0 5px;
+  color: var(--hero-default-500);
+  font-size: 12px;
+  font-weight: 700;
 }
 .tab-item .warning-message {
-  color: grey;
+  color: var(--hero-warning);
 }
 </style>

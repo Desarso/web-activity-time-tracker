@@ -55,6 +55,7 @@
           <TabItem
             v-for="(tab, i) of mergeAllDays(tabsByDays?.days)"
             :item="tab"
+            :listType="TypeOfList.ByDays"
             :summaryTimeForWholeDay="tabsByDays?.summaryTime || 0"
           />
         </Expander>
@@ -69,6 +70,7 @@
             v-for="(tab, i) of tabDay.tabs"
             :key="i"
             :item="tab"
+            :listType="TypeOfList.ByDays"
             :summaryTimeForWholeDay="tabDay.time"
           />
         </Expander>
@@ -97,6 +99,7 @@ import { convertSummaryTimeToString } from '../utils/converter';
 import { ranges, ThisWeekRange } from '../utils/date';
 import { useImportToCsvWithData } from '../functions/useImportToCsv';
 import { useFile, FileType } from '../functions/useFile';
+import { TypeOfList } from '../utils/enums';
 
 const { t } = useI18n();
 
@@ -174,33 +177,51 @@ function mergeAllDays(days: TabListByDays['days'] | undefined): CurrentTabItem[]
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  margin: 10px 25px;
+  margin: 12px 25px;
+  padding: 18px;
   text-align: center;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 
 .stats-block.block .header {
-  background-color: var(--popup-header);
-  color: rgb(66, 66, 66);
-  padding: 5px 5px;
-  border-radius: 5px;
+  background-color: transparent;
+  color: var(--hero-default-500);
+  padding: 0;
+  font-size: 13px;
+  font-weight: 850;
 }
 
 .stats-block.block p {
-  margin: 2px;
+  margin: 8px 0 0;
   text-align: center;
-  font-weight: 700;
-  font-size: 13px;
-  color: rgb(59, 59, 59);
+  font-weight: 850;
+  font-size: 22px;
+  color: var(--hero-foreground);
 }
 .date-block {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 14px;
   margin: 0 25px;
+  padding: 14px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 .by-days-chart {
   height: 240px;
+  padding: 16px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 .expander.total {
-  background-color: #e0e4ff;
+  background-color: var(--hero-primary-soft);
 }
 </style>

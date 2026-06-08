@@ -1,6 +1,8 @@
 <template>
   <p class="description">{{ t('timeChartDescription.message') }}</p>
-  <Bar :data="data" :options="options" v-if="isLoaded" />
+  <div class="chart-frame">
+    <Bar :data="data" :options="options" v-if="isLoaded" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -148,7 +150,7 @@ function fillData(timeIntervalList: TimeInterval[]) {
     const emptyArray: number[] = Object.assign([], tempArray);
     emptyArray[obj.hour] = Number(obj.summary / 60);
     result.push({
-      backgroundColor: ['#5668e2'],
+      backgroundColor: ['#006fee'],
       data: emptyArray,
     });
   });
@@ -211,3 +213,11 @@ async function buildChart() {
 
 onMounted(async () => await buildChart());
 </script>
+
+<style scoped>
+.chart-frame {
+  position: relative;
+  height: 340px;
+  min-height: 0;
+}
+</style>

@@ -3,4 +3,5 @@ export interface CurrentTabItem {
   favicon: string | undefined;
   summaryTime: number;
   sessions: number;
+  incognito?: boolean;
 }

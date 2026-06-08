@@ -4,11 +4,13 @@ export class TimeInterval implements ISerializable<TimeInterval> {
   domain: string = '';
   intervals: string[] = [];
   day: string = '';
+  incognito: boolean = false;
 
-  init(day: string, domain: string) {
+  init(day: string, domain: string, incognito = false) {
     this.domain = domain;
     this.intervals = [];
     this.day = day;
+    this.incognito = incognito;
   }
 
   addInterval() {
@@ -35,6 +37,7 @@ export class TimeInterval implements ISerializable<TimeInterval> {
     this.domain = input.domain;
     this.day = input.day;
     this.intervals = input.intervals;
+    this.incognito = input.incognito === true;
 
     return this;
   }

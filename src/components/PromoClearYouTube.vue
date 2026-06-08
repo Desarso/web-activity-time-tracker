@@ -5,7 +5,9 @@
     </div>
     <p>{{ t('promoClearYoutube.message') }}</p>
     <input type="button" :value="t('promoClearYoutube.description')" @click="openStore()" />
-    <img height="15" src="../assets/icons/close.svg" @click="closeBlock()" />
+    <button class="close-action" type="button" @click="closeBlock()">
+      <TablerIcon name="x" :size="18" />
+    </button>
   </div>
 </template>
 
@@ -24,6 +26,7 @@ import { CHROME_STORE_CLEAR_YOUTUBE_URL } from '../utils/chrome-url';
 import { usePromoExtension } from '../compositions/usePromoExtension';
 import { computedAsync } from '@vueuse/core';
 import { useExtensionPage } from '../compositions/useExtensionPage';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -56,12 +59,18 @@ async function saveValue() {
 <style scoped>
 .review-block {
   margin: 20px 0 20px 0;
-  padding: 10px;
+  padding: 14px;
   font-size: 14px;
-  background-color: #efefef;
-  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(0, 111, 238, 0.1), rgba(23, 201, 100, 0.08)),
+    var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 .review-block .btn-block {
   margin: 8px 5px 0 0;
@@ -71,12 +80,27 @@ async function saveValue() {
 .review-block p {
   display: inline-block;
   margin: 0 10px;
-  font-size: 16px;
+  color: var(--hero-foreground);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
   width: 70%;
 }
 .review-block img {
   margin-left: 8px;
-  cursor: pointer;
   float: right;
+}
+
+.review-block .close-action {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hero-default-500);
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-md);
+  cursor: pointer;
 }
 </style>

@@ -40,8 +40,20 @@ const { t } = useI18n();
 
 <style scoped>
 .about .about-label {
+  padding: 16px;
   font-size: 14px;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
   display: block;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
+  color: var(--hero-default-500);
+  font-weight: 700;
+}
+
+.about .about-label a {
+  color: var(--hero-primary);
+  font-weight: 850;
 }
 </style>

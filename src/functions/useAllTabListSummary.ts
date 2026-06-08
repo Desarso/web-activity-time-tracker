@@ -1,13 +1,16 @@
 import { ActiveDay, OverallStats } from '../dto/tabListSummary';
 import { Tab, TabDay } from '../entity/tab';
 import { injectTabsRepository } from '../repository/inject-tabs-repository';
-import { SortingBy } from '../utils/enums';
+import { ActivityScope, SortingBy } from '../utils/enums';
 import { daysBetween } from '../utils/time';
 import { todayLocalDate } from '../utils/date';
 
-export async function useAllTabListSummary(sortingBy: SortingBy): Promise<OverallStats | null> {
+export async function useAllTabListSummary(
+  sortingBy: SortingBy,
+  scope: ActivityScope = ActivityScope.Normal,
+): Promise<OverallStats | null> {
   const repo = await injectTabsRepository();
-  const unSortedTabs = repo.getTabs();
+  const unSortedTabs = repo.getTabsByScope(scope);
   let tabs: Tab[] = [];
 
   if (unSortedTabs.length == 0) return null;

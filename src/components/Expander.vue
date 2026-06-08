@@ -47,34 +47,47 @@ const open = ref<boolean>();
 .header {
   display: inline-block;
   width: 90%;
+  color: var(--hero-foreground);
+  font-weight: 850;
 }
 .header span {
-  font-weight: 700;
+  font-weight: 850;
   font-size: 13px;
-  color: rgb(59, 59, 59);
+  color: var(--hero-primary);
   float: right;
+}
+.expander {
+  margin: 10px 16px;
+  overflow: hidden;
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  background: var(--hero-content1);
+  box-shadow: var(--hero-shadow-sm);
 }
 .expander-trigger {
   cursor: pointer;
-  padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid #efefef;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid transparent;
+  background: var(--hero-content1);
 }
 .expander-trigger:hover {
-  color: #477dca;
+  color: var(--hero-primary);
+  background: var(--hero-default-100);
 }
 .expander-trigger.active {
-  border-bottom-color: #477dca;
+  border-bottom-color: var(--hero-default-200);
 }
 .expander-trigger-Icon {
   transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  stroke: var(--hero-primary);
 }
 .expander-trigger-Icon.open {
-  stroke: #ff6347;
+  stroke: var(--hero-primary);
   transform: rotate(180deg);
 }
 .expander-body {
-  padding: 1px;
-  background: #eff0f2;
+  padding: 6px 0 10px;
+  background: var(--hero-default-100);
 }
 .leftToRight-enter-active {
   -webkit-animation: leftToRight 0.5s;

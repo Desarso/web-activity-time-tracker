@@ -1,7 +1,9 @@
 <template>
   <div class="review-block" v-if="showReview">
     <p>{{ t('enjoyAndReview.message') }}</p>
-    <img height="15" src="../assets/icons/close.svg" @click="closeBlock()" />
+    <button class="close-action" type="button" @click="closeBlock()">
+      <TablerIcon name="x" :size="18" />
+    </button>
     <input type="button" :value="t('enjoyAndReview.description')" @click="openStore()" />
   </div>
 </template>
@@ -20,6 +22,7 @@ import { StorageParams } from '../storage/storage-params';
 import { addDays, startOfToday } from 'date-fns';
 import { addHours } from 'date-fns/esm';
 import { CHROME_STORE_REVIEW_URL, EDGE_STORE_REVIEW_URL } from '../utils/chrome-url';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -64,12 +67,18 @@ async function openStore() {
 
 <style scoped>
 .review-block {
-  width: -webkit-fill-available;
+  width: calc(100% - 24px);
   position: fixed;
-  bottom: 0;
-  padding: 8px 20px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 12px 14px;
   font-size: 14px;
-  background-color: #efefef;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-md);
+  backdrop-filter: blur(12px);
 }
 .review-block input[type='button'] {
   margin: 0 20px 0 0;
@@ -78,12 +87,22 @@ async function openStore() {
 }
 .review-block p {
   display: inline-block;
-  margin: 8px;
-  font-size: 17px;
-  font-weight: 500;
+  margin: 10px 8px;
+  color: var(--hero-foreground);
+  font-size: 15px;
+  font-weight: 850;
 }
-.review-block img {
-  padding: 9px 0 0 0;
+.review-block .close-action {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  color: var(--hero-default-500);
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-md);
   cursor: pointer;
   float: right;
 }

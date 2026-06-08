@@ -41,36 +41,51 @@ function openAppLink(app: App) {
 
 <style scoped>
 .main {
-  margin-top: 50px;
+  margin-top: 28px;
 }
 .header {
+  color: var(--hero-default-500);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 850;
   text-transform: uppercase;
 }
 .app-block {
   margin: 20px 0;
-  padding: 10px 20px;
+  padding: 16px 18px;
   font-size: 14px;
-  background-color: #efefef;
-  border-radius: 10px;
-  min-width: 655px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
+  min-width: 0;
   display: flex;
   flex-direction: row;
   gap: 20px;
   cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+.app-block:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 111, 238, 0.26);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
 }
 .app-block .img-block {
   margin: auto 0;
 }
 .title {
-  font-weight: 500;
-  font-size: 15px;
+  margin: 0;
+  color: var(--hero-foreground);
+  font-weight: 850;
+  font-size: 16px;
 }
 .description {
-  margin-top: 10px;
+  margin: 8px 0 0;
   font-size: 14px;
-  color: black;
+  color: var(--hero-default-500);
+  line-height: 1.5;
 }
 img {
   margin: auto;

@@ -15,7 +15,7 @@
 Web Activity Time Tracker keeps track of how much time you spend on the web and presents the stats in a useful and intuitive way. 
 You can set a daily visit limit for sites and block it after the expiration of the limit. 
 
-Extension uses only local [chrome.storage API](https://developer.chrome.com/apps/storage) chrome.storage API to store data and it doesn't send data anywhere.
+The development version can sync activity across multiple browsers and devices through the optional local backend in `backend/`.
 
 ![image](https://user-images.githubusercontent.com/23387046/206865140-875bf7ab-a59e-42e3-bb9e-e348e8b85749.png) ![image](https://user-images.githubusercontent.com/23387046/206865174-aa409efe-495d-450e-a8ea-1d97024c9e23.png)
 
@@ -37,14 +37,43 @@ Web Activity Time Tracker is available via the official [Chrome Web Store](https
 
 # Install as an extension from source
 
-1. Download the latest available version and unarchive to your preferred location (whichever suits you).
-2. Using Google Chrome browser, navigate to chrome://extensions/ and enable "Developer mode" in the upper right corner.
-3. Click on the "Load unpacked extension..." button.
-4. Browse to the src directory of the unarchived folder and confirm.
+1. Build the unpacked extension:
+
+```bash
+corepack pnpm@8.15.9 install
+corepack pnpm@8.15.9 exec vite build --mode development
+```
+
+2. Open local browser extension pages:
+
+```bash
+corepack pnpm@8.15.9 open:extension-install
+```
+
+3. In each Chromium browser, enable Developer mode.
+4. Click "Load unpacked".
+5. Select the `dist` directory from this repo.
+6. Enable "Allow in Incognito" if private-window tracking should be collected.
+
+More detailed agent/handoff instructions are in [docs/LOCAL_EXTENSION_INSTALL.md](docs/LOCAL_EXTENSION_INSTALL.md).
 
 # Run
 
-```pnpm run dev```
+Extension watch build:
+
+```bash
+corepack pnpm@8.15.9 dev
+```
+
+Local backend:
+
+```bash
+TRACKER_SESSION_SECRET=change-me \
+GOOGLE_OAUTH_CLIENT_IDS=your-client-id.apps.googleusercontent.com \
+corepack pnpm@8.15.9 backend
+```
+
+Google login needs a real OAuth client ID in `src/manifest.json`.
 
 # License
 

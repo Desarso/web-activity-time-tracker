@@ -4,7 +4,9 @@
     <ul readonly class="url-list">
       <li v-for="(url, i) of whiteList" :key="i">
         <div>
-          <img src="../assets/icons/delete.png" height="16" @click="deleteFromWhiteList(url)" />
+          <button class="icon-action danger" type="button" @click="deleteFromWhiteList(url)">
+            <TablerIcon name="trash" :size="18" />
+          </button>
           <Favicon :type="TypeOfUrl.WebSite" :favicon="getFavicon(url)" />
           <span>{{ url }}</span>
         </div>
@@ -45,6 +47,7 @@ import { injectStorage } from '../storage/inject-storage';
 import { StorageParams } from '../storage/storage-params';
 import { isDomainEquals } from '../utils/common';
 import { extractHostname } from '../utils/extract-hostname';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -95,5 +98,26 @@ async function save(value: any) {
 
 .custom-width {
   width: 538px;
+}
+
+.icon-action {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  color: var(--hero-default-500);
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-md);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.icon-action.danger {
+  color: var(--hero-danger);
+  background: var(--hero-danger-soft);
+  border-color: rgba(243, 18, 96, 0.22);
 }
 </style>

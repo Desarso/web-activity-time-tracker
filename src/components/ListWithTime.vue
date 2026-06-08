@@ -31,12 +31,12 @@
   <ul readonly class="url-list">
     <li v-for="(limit, i) of list" :key="i">
       <div>
-        <img src="../assets/icons/delete.png" height="16" @click="deleteFromList(limit.domain)" />
-        <img
-          src="../assets/icons/edit.svg"
-          height="16"
-          @click="editItemFromList(limit.domain, limit.time)"
-        />
+        <button class="icon-action danger" type="button" @click="deleteFromList(limit.domain)">
+          <TablerIcon name="trash" :size="18" />
+        </button>
+        <button class="icon-action" type="button" @click="editItemFromList(limit.domain, limit.time)">
+          <TablerIcon name="edit" :size="18" />
+        </button>
         <Favicon :type="TypeOfUrl.WebSite" :favicon="getFavicon(limit.domain)" />
         <span>{{ limit.domain }}</span>
         <div>
@@ -74,6 +74,7 @@ import { convertHHMMToSeconds, convertSecondsToHHMM } from '../utils/converter';
 import { Restriction } from '../entity/restriction';
 import { BaseTimeList } from '../entity/baseTimeList';
 import { Notifications } from '../entity/notification';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -202,17 +203,45 @@ async function save(value: any) {
 .limits-time-block {
   display: flex;
   justify-content: start;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
 }
 
 .limits-time-block .date-picker {
   width: 120px;
-  margin: 0 15px;
+  margin: 0;
 }
 .blocked {
   display: inline-block;
   font-size: 13px;
-  color: gray;
+  color: var(--hero-danger);
   margin-left: 55px;
   margin-top: 0;
+  font-weight: 700;
+}
+
+.icon-action {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  color: var(--hero-default-500);
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-md);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.icon-action.danger {
+  color: var(--hero-danger);
+  background: var(--hero-danger-soft);
+  border-color: rgba(243, 18, 96, 0.22);
 }
 </style>

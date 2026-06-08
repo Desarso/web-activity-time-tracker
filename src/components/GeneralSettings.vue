@@ -289,10 +289,16 @@ function restoreFileUpload() {
 .export-block {
   display: flex;
   justify-content: start;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
 }
 
 .export-block .date-picker {
   width: 250px;
-  margin-right: 15px;
+  margin-right: 0;
 }
 </style>

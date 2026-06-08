@@ -33,20 +33,13 @@
         <div class="header">
           {{ t('mostActiveDay.message') }}
           <div class="tooltip">
-            <img
-              v-if="isIncludedCurrentForActiveDays"
-              src="../assets/icons/today.svg"
-              height="20"
-              class="most-day"
+            <button
+              type="button"
+              :class="['most-day', { muted: !isIncludedCurrentForActiveDays }]"
               @click="excludeTodayFromMostActive()"
-            />
-            <img
-              v-if="!isIncludedCurrentForActiveDays"
-              src="../assets/icons/no-today.svg"
-              height="20"
-              class="most-day"
-              @click="excludeTodayFromMostActive()"
-            />
+            >
+              <TablerIcon name="calendar" :size="16" :stroke="2.4" />
+            </button>
             <span class="tooltiptext">{{
               isIncludedCurrentForActiveDays ? t('todayInclude.message') : t('todayEcclude.message')
             }}</span>
@@ -59,20 +52,13 @@
         <div class="header">
           {{ t('mostInactiveDay.message') }}
           <div class="tooltip">
-            <img
-              v-if="isIncludedCurrentForInActiveDays"
-              src="../assets/icons/today.svg"
-              height="20"
-              class="most-day"
+            <button
+              type="button"
+              :class="['most-day', { muted: !isIncludedCurrentForInActiveDays }]"
               @click="excludeTodayFromMostInActive()"
-            />
-            <img
-              v-if="!isIncludedCurrentForInActiveDays"
-              src="../assets/icons/no-today.svg"
-              height="20"
-              class="most-day"
-              @click="excludeTodayFromMostInActive()"
-            />
+            >
+              <TablerIcon name="calendar" :size="16" :stroke="2.4" />
+            </button>
             <span class="tooltiptext">
               {{
                 isIncludedCurrentForInActiveDays
@@ -102,6 +88,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { OverallStats } from '../dto/tabListSummary';
 import { convertSummaryTimeToString } from '../utils/converter';
+import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -156,37 +143,75 @@ function excludeTodayFromMostInActive() {
 
 <style scoped>
 .stats-block {
-  margin: 5px 35px;
+  margin: 8px 16px 16px;
+  padding: 12px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 
 .stats-block .row {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+  gap: 10px;
   margin: 10px 0;
 }
 
 .stats-block .block {
-  width: 175px;
+  width: 100%;
+  min-height: 76px;
   text-align: center;
+  padding: 10px;
+  background: var(--hero-default-100);
+  border-radius: var(--hero-radius-md);
 }
 
 .stats-block .block .header {
-  background-color: var(--popup-header);
-  color: rgb(66, 66, 66);
-  padding: 5px 5px;
-  border-radius: 5px;
+  background-color: transparent;
+  color: var(--hero-default-500);
+  padding: 0;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .stats-block .block p {
-  margin: 2px;
+  margin: 5px 0 0;
   text-align: center;
-  font-weight: 700;
-  font-size: 13px;
-  color: rgb(59, 59, 59);
+  font-weight: 850;
+  font-size: 14px;
+  color: var(--hero-foreground);
 }
 .most-day {
   cursor: pointer;
   margin-left: 5px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--hero-primary-200);
+  border-radius: var(--hero-radius-md);
+  background: var(--hero-primary-50);
+  color: var(--hero-primary);
+  vertical-align: middle;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.most-day:hover {
+  background: var(--hero-primary-100);
+  transform: translateY(-1px);
+}
+
+.most-day.muted {
+  border-color: var(--hero-default-200);
+  background: var(--hero-default-100);
+  color: var(--hero-default-400);
 }
 </style>

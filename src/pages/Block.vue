@@ -1,27 +1,31 @@
 <template>
-  <div class="block-container">
-    <div class="header">
-      <img class="d-inline-block" height="40" src="../assets/icons/48x48.png" />
-      <p class="d-inline-block header">Web Activity Time Tracker</p>
+  <div class="block-page">
+    <div class="block-container">
+    <div class="brand">
+      <span class="brand-icon"><TablerIcon name="stopwatch" :size="34" :stroke="2.2" /></span>
+      <div>
+        <p class="brand-kicker">{{ t('limit.message') }}</p>
+        <p class="brand-title">Web Activity Time Tracker</p>
+      </div>
     </div>
-    <p>
+    <p class="block-message">
       {{ t('block.message') }}
     </p>
-    <div>
+    <div class="site-card">
       <img class="favicon" height="35" :src="favicon" />
       <span>{{ webSite }}</span>
     </div>
     <p class="source-url">{{ sourceUrl }}</p>
-    <table>
-      <tr>
-        <td class="title">{{ t('limit.message') }}:</td>
-        <td class="value">{{ limitTimeString }}</td>
-      </tr>
-      <tr>
-        <td class="title">{{ t('sessions.message') }}:</td>
-        <td class="value">{{ summaryCounter }}</td>
-      </tr>
-    </table>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">{{ t('limit.message') }}</p>
+        <p class="stat-value">{{ limitTimeString }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">{{ t('sessions.message') }}</p>
+        <p class="stat-value">{{ summaryCounter }}</p>
+      </div>
+    </div>
     <input
       v-if="allowDeferringBlock && haveToShowDeffering"
       type="button"
@@ -31,6 +35,7 @@
     />
     <p class="desctiption">{{ t('deferringDescription.message') }}</p>
     <PromoClearYouTube />
+    </div>
   </div>
 </template>
 
@@ -43,6 +48,7 @@ import { BLOCK_DEFERRAL_DEFAULT, StorageParams } from '../storage/storage-params
 import { convertLimitTimeToString } from '../utils/converter';
 import PromoClearYouTube from '../components/PromoClearYouTube.vue';
 import { canDefering, defering } from '../functions/deferList';
+import TablerIcon from '../components/TablerIcon.vue';
 
 const { t } = useI18n();
 
@@ -81,45 +87,82 @@ async function deferring() {
     haveToShowDeffering.value
   ) {
     await defering(webSite.value, 5);
-    if (sourceUrl.value != '') window.location.replace(sourceUrl.value);
+    if (sourceUrl.value) window.location.replace(sourceUrl.value);
   }
 }
 </script>
 
 <style scoped>
-body {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow: auto;
+.block-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: var(--hero-foreground);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(243, 18, 96, 0.12), transparent 36%),
+    linear-gradient(180deg, #fff 0%, var(--hero-background) 52%);
 }
+
 .block-container {
-  margin: auto auto;
+  width: min(560px, 100%);
   text-align: center;
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--hero-default-200);
+  border-radius: 22px;
+  box-shadow: var(--hero-shadow-md);
+  backdrop-filter: blur(12px);
 }
 
 .block-container p {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .block-container span {
-  font-weight: 600;
+  font-weight: 800;
   font-size: 21px;
   vertical-align: top;
 }
 
-.header {
-  font-weight: 600;
-  color: #4a4a4a;
-  font-size: 19px !important;
-  vertical-align: super;
-  margin-left: 10px;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--hero-primary);
+  background: var(--hero-primary-soft);
+  border: 1px solid rgba(0, 111, 238, 0.18);
+  box-shadow: 0 8px 18px rgba(0, 111, 238, 0.18);
+}
+
+.brand-kicker {
+  margin: 0 0 4px;
+  color: var(--hero-danger);
+  font-size: 12px !important;
+  font-weight: 800;
+}
+
+.brand-title {
+  margin: 0;
+  color: var(--hero-foreground);
+  font-size: 20px !important;
+  font-weight: 850;
+}
+
+.block-message {
+  color: var(--hero-default-500);
+  line-height: 1.55;
 }
 .stats {
   display: flex;
@@ -129,28 +172,59 @@ body {
   display: inline-block;
   width: 100px;
 }
-table {
-  font-size: 17px;
-  margin: auto;
-  margin-top: 15px;
+.site-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: var(--hero-default-100);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
 }
-table .title {
-  width: 100px;
-  text-align: left;
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 4px;
 }
-table .value {
-  font-weight: 600;
+
+.stat-card {
+  padding: 14px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
+}
+
+.stat-label {
+  margin: 0 0 6px;
+  color: var(--hero-default-500);
+  font-size: 13px !important;
+  font-weight: 700;
+}
+
+.stat-value {
+  margin: 0;
+  color: var(--hero-foreground);
+  font-size: 19px !important;
+  font-weight: 850;
 }
 .desctiption {
+  margin-top: 14px;
   font-size: 13px !important;
-  color: #4a4a4a;
+  color: var(--hero-default-500);
 }
 .favicon {
-  margin: 0 10px;
+  margin: 0;
+  border-radius: 8px;
 }
 .source-url {
-  margin: 5px;
+  margin: 8px auto 0;
   font-size: 14px !important;
-  color: grey;
+  color: var(--hero-default-500);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 </style>

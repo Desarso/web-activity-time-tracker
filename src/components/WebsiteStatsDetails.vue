@@ -41,27 +41,32 @@ const { t } = useI18n();
 
 <style scoped>
 .title {
-  font-weight: 600;
+  font-weight: 850;
   font-size: 16px;
 }
 .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
   width: auto;
+  margin: 16px 0;
 }
 .block {
-  padding: 10px;
-  background-color: rgb(237 237 237);
-  border-radius: 10px;
-  margin-right: 30px;
-  box-shadow: 12px 12px 2px 1px rgb(185 255 171);
+  padding: 18px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 .block p.title {
-  font-size: 15px;
-  color: grey;
+  margin: 0;
+  font-size: 13px;
+  color: var(--hero-default-500);
 }
 .block p.value {
-  margin: 5px;
+  margin: 8px 0 0;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 850;
+  color: var(--hero-foreground);
 }
 </style>

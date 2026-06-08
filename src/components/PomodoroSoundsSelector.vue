@@ -15,7 +15,9 @@
     <option :value="PomodoroSounds['Sound 12']">{{ t('sound.message') }} 12</option>
     <option :value="PomodoroSounds['Sound 13']">{{ t('sound.message') }} 13</option>
   </select>
-  <img src="../assets/icons/start.svg" height="22" @click="playAudio" class="play" />
+  <button class="play" type="button" @click="playAudio">
+    <TablerIcon name="player-play" :size="18" />
+  </button>
   <span class="preview">{{ t('clickToPreview.message') }}</span>
 </template>
 
@@ -31,6 +33,7 @@ import { useI18n } from 'vue-i18n';
 import { PomodoroAudioParams, PomodoroSounds } from '../utils/pomodoro';
 import { injectStorage } from '../storage/inject-storage';
 import { playSound } from '../functions/playSound';
+import TablerIcon from './TablerIcon.vue';
 
 const props = defineProps<{
   option: PomodoroAudioParams;
@@ -55,12 +58,22 @@ async function onAudioChange(target: any) {
   display: inline-block;
   cursor: pointer;
   margin-left: 10px;
+  padding: 7px;
+  color: var(--hero-success);
+  background: var(--hero-success-soft);
+  border: 1px solid rgba(23, 201, 100, 0.22);
+  border-radius: 999px;
+  vertical-align: middle;
 }
 .title-audio {
+  color: var(--hero-default-500);
   font-size: 15px;
+  font-weight: 800;
 }
 .preview {
-  color: grey;
+  color: var(--hero-default-500);
+  font-size: 13px;
+  font-weight: 700;
 }
 .option {
   height: 38px;

@@ -16,12 +16,15 @@ import { Settings } from './functions/settings';
 import { useNotificationList } from './functions/useNotificationList';
 import { NotificationType, useNotification } from './functions/useNotification';
 import { Messages } from './utils/messages';
+import { syncSnapshotIfEnabled } from './backend/background-sync';
+import { ActivityScope } from './utils/enums';
 
 const activeTabInstance = ActiveTab.getInstance();
 
 interface CurrentObj {
   tab: Tab;
   activeDomain: string;
+  scope: ActivityScope;
 }
 
 let currentObj: CurrentObj | null;
@@ -38,6 +41,7 @@ async function trackTime() {
     const activeTab = window.tabs?.find(t => t.active === true);
     if (isValidPage(activeTab)) {
       const activeDomain = extractHostname(activeTab!.url);
+      const scope = activeTab?.incognito ? ActivityScope.Incognito : ActivityScope.Normal;
 
       if ((await isInBlackList(activeDomain)) && (await canChangeBadge())) {
         await useBadge({
@@ -49,18 +53,19 @@ async function trackTime() {
         if (
           currentObj != null &&
           currentObj.activeDomain == activeDomain &&
-          !isActiveTabWasChanged(activeDomain)
+          currentObj.scope == scope &&
+          !isActiveTabWasChanged(activeDomain, scope)
         ) {
-          await mainTrackerWrapper(activeTab!, activeDomain, currentObj.tab);
+          await mainTrackerWrapper(activeTab!, activeDomain, scope, currentObj.tab);
           return;
         }
 
-        let tab = repo.getTab(activeDomain);
+        let tab = repo.getTab(activeDomain, scope);
         if (tab == undefined) {
-          tab = await repo.addTab(activeDomain);
+          tab = await repo.addTab(activeDomain, scope);
         }
         if (tab != undefined) {
-          await mainTrackerWrapper(activeTab!, activeDomain, tab);
+          await mainTrackerWrapper(activeTab!, activeDomain, scope, tab);
         }
       }
     } else await closeOpenInterval();
@@ -70,7 +75,10 @@ async function trackTime() {
 }
 
 async function closeOpenInterval() {
-  (await useDailyIntervals()).closeInterval(activeTabInstance.getActiveTabDomain());
+  (await useDailyIntervals()).closeInterval(
+    activeTabInstance.getActiveTabDomain(),
+    activeTabInstance.getActiveTabIsIncognito(),
+  );
   activeTabInstance.setActiveTab(null);
   currentObj = null;
 }
@@ -79,6 +87,7 @@ async function mainTracker(
   state: Browser.Idle.IdleState,
   activeTab: Browser.Tabs.Tab,
   activeDomain: string,
+  scope: ActivityScope,
   tab: Tab,
 ) {
   function isAudible() {
@@ -88,6 +97,7 @@ async function mainTracker(
   currentObj = {
     tab: tab,
     activeDomain: activeDomain,
+    scope,
   };
 
   const isAudibleValue = isAudible();
@@ -105,11 +115,17 @@ async function mainTracker(
       return;
     }
 
-    if (isActiveTabWasChanged(activeDomain)) {
+    if (isActiveTabWasChanged(activeDomain, scope)) {
       tab.incCounter();
-      (await useDailyIntervals()).closeInterval(activeTabInstance.getActiveTabDomain());
-      activeTabInstance.setActiveTab(activeTab.url!);
-      (await useDailyIntervals()).addInterval(activeTabInstance.getActiveTabDomain());
+      (await useDailyIntervals()).closeInterval(
+        activeTabInstance.getActiveTabDomain(),
+        activeTabInstance.getActiveTabIsIncognito(),
+      );
+      activeTabInstance.setActiveTab(activeTab.url!, scope === ActivityScope.Incognito);
+      (await useDailyIntervals()).addInterval(
+        activeTabInstance.getActiveTabDomain(),
+        scope === ActivityScope.Incognito,
+      );
     }
     if (tab.favicon == '' && activeTab.favIconUrl != undefined)
       tab.setFavicon(activeTab.favIconUrl);
@@ -143,17 +159,25 @@ async function mainTracker(
   } else await closeOpenInterval();
 }
 
-async function mainTrackerWrapper(activeTab: Browser.Tabs.Tab, activeDomain: string, tab: Tab) {
+async function mainTrackerWrapper(
+  activeTab: Browser.Tabs.Tab,
+  activeDomain: string,
+  scope: ActivityScope,
+  tab: Tab,
+) {
   const inactivityInterval = (await Settings.getInstance().getSetting(
     StorageParams.INTERVAL_INACTIVITY,
   )) as number;
   const number = Number(inactivityInterval);
   const state = await Browser.idle.queryState(number);
-  await mainTracker(state, activeTab!, activeDomain, tab);
+  await mainTracker(state, activeTab!, activeDomain, scope, tab);
 }
 
-function isActiveTabWasChanged(activeDomain: string) {
-  return activeDomain != activeTabInstance.getActiveTabDomain();
+function isActiveTabWasChanged(activeDomain: string, scope: ActivityScope) {
+  return (
+    activeDomain != activeTabInstance.getActiveTabDomain() ||
+    (scope === ActivityScope.Incognito) !== activeTabInstance.getActiveTabIsIncognito()
+  );
 }
 
 async function saveTabs() {
@@ -161,6 +185,7 @@ async function saveTabs() {
   const repo = await injectTabsRepositorySingleton();
   const tabs = repo.getTabs();
   await storage.saveTabs(tabs);
+  await syncSnapshotIfEnabled();
 }
 
 async function canChangeBadge() {

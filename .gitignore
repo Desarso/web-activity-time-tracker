@@ -26,3 +26,4 @@ artifacts
 # Config files
 .webextrc
 .webextrc.*
+backend/data

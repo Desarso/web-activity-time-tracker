@@ -4,6 +4,7 @@ export class ActiveTab {
   private static instance: ActiveTab;
   private _activeTabUrl: string | null;
   private _activeTabDomain: string | null;
+  private _isIncognito: boolean;
 
   constructor() {
     if (ActiveTab.instance) {
@@ -11,6 +12,7 @@ export class ActiveTab {
     }
     this._activeTabUrl = null;
     this._activeTabDomain = null;
+    this._isIncognito = false;
   }
 
   static getInstance(): ActiveTab {
@@ -18,9 +20,10 @@ export class ActiveTab {
     return ActiveTab.instance;
   }
 
-  public setActiveTab(value: string | null): void {
+  public setActiveTab(value: string | null, isIncognito = false): void {
     this._activeTabUrl = value;
     this._activeTabDomain = value != null ? extractHostname(value) : null;
+    this._isIncognito = value != null && isIncognito;
   }
 
   public getActiveTabUrl(): string | null {
@@ -29,5 +32,9 @@ export class ActiveTab {
 
   public getActiveTabDomain(): string | null {
     return this._activeTabDomain;
+  }
+
+  public getActiveTabIsIncognito(): boolean {
+    return this._isIncognito;
   }
 }

@@ -6,6 +6,7 @@
   "description": "__MSG_extDescription__",
   "options_page": "src/dashboard.html",
   "default_locale": "en",
+  "incognito": "spanning",
   "icons": {
     "16": "16x16.png",
     "32": "32x32.png",
@@ -20,8 +21,21 @@
     "unlimitedStorage",
     "alarms",
     "notifications",
-    "offscreen"
+    "offscreen",
+    "identity"
   ],
+  "host_permissions": [
+    "http://localhost:8787/*",
+    "https://*.webtracker.online/*"
+  ],
+  "oauth2": {
+    "client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "openid",
+      "email",
+      "profile"
+    ]
+  },
   "offline_enabled": true,
   "background": {
     "service_worker": "src/background.ts"

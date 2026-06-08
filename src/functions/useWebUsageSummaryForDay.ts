@@ -5,11 +5,12 @@ import { DaySummary } from '../dto/daySummary';
 import { startOfYesterday } from 'date-fns';
 import { getPercentage } from '../utils/common';
 import { ITabsRepository } from '../repository/tabs-repository-interface';
+import { ActivityScope } from '../utils/enums';
 
 export async function useWebUsageSummaryForDay(): Promise<DaySummary | null> {
   const repo = await injectTabsRepository();
 
-  const unSortedTabs = repo.getTabs();
+  const unSortedTabs = repo.getTabsByScope(ActivityScope.Normal);
   if (unSortedTabs.length == 0) return null;
 
   const dataToday = getData(todayLocalDate(), repo);
@@ -30,7 +31,7 @@ export async function useWebUsageSummaryForDay(): Promise<DaySummary | null> {
 }
 
 function getData(date: string, repo: ITabsRepository) {
-  const unSortedTabs = repo.getTabs();
+  const unSortedTabs = repo.getTabsByScope(ActivityScope.Normal);
   if (unSortedTabs.length == 0) return null;
 
   const targetTabs = unSortedTabs.filter(x => x.days.find(s => s.date === date));

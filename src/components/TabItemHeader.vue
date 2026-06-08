@@ -6,10 +6,12 @@
     </div>
     <div class="sorted-block">
       <span class="mr-5">{{ t('sortBy.message') }}</span>
-      <select class="p-5" v-model="sortingBySelected" @change="sortingBy()">
-        <option :value="SortingBy.UsageTime">{{ t('usageTime.message') }}</option>
-        <option :value="SortingBy.Sessions">{{ t('sessions.message') }}</option>
-      </select>
+      <HeroSelect
+        v-model="sortingBySelected"
+        :options="sortingOptions"
+        :ariaLabel="t('sortBy.message')"
+        @change="sortingBy()"
+      />
     </div>
   </div>
 </template>
@@ -24,15 +26,17 @@ export default {
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { convertSummaryTimeToString } from '../utils/converter';
-import { SortingBy, TypeOfList } from '../utils/enums';
+import { ActivityScope, SortingBy, TypeOfList } from '../utils/enums';
+import HeroSelect from './HeroSelect.vue';
 
 const { t } = useI18n();
 
 const props = defineProps<{
   listType: TypeOfList;
+  scope?: ActivityScope;
   summaryTime: number;
   countOfSites: number;
-  firstDay: Date;
+  firstDay?: Date;
   countOfActiveDays: number;
 }>();
 
@@ -43,6 +47,7 @@ const emit = defineEmits<{
 }>();
 
 const title = computed(() => {
+  if (props.scope == ActivityScope.Incognito) return 'Private activity';
   if (props.listType == TypeOfList.Today || props.listType == TypeOfList.Dashboard)
     return t('today.message');
   if (props.listType == TypeOfList.All) {
@@ -50,7 +55,7 @@ const title = computed(() => {
       props.countOfActiveDays > 1 ? `(${props.countOfActiveDays} ${t('days.message')})` : '';
     return `${t(
       'aggregate.message',
-    )} ${props.firstDay.toLocaleDateString()} ${countOfActiveDays} (${props.countOfSites} ${t(
+    )} ${props.firstDay?.toLocaleDateString() ?? ''} ${countOfActiveDays} (${props.countOfSites} ${t(
       'websites.message',
     )})`;
   }
@@ -61,6 +66,10 @@ onMounted(async () => {
 });
 
 const summaryTimeString = computed(() => convertSummaryTimeToString(props.summaryTime));
+const sortingOptions = computed(() => [
+  { label: t('usageTime.message'), value: SortingBy.UsageTime },
+  { label: t('sessions.message'), value: SortingBy.Sessions },
+]);
 
 function sortingBy() {
   emit('sortingBy', sortingBySelected.value!);
@@ -69,11 +78,17 @@ function sortingBy() {
 
 <style scoped>
 .header-block {
-  background-color: var(--popup-header);
-  padding: 1px 0;
-  text-align: center;
+  margin: 12px 16px;
+  padding: 14px;
+  text-align: left;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  background-color: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 .time-block {
   flex: auto;
@@ -81,13 +96,22 @@ function sortingBy() {
 p {
   font-size: 14px;
   margin: 0;
+  color: var(--hero-default-500);
+  font-weight: 700;
 }
 .time {
-  font-size: 16px;
-  font-weight: 600;
+  margin-top: 3px;
+  color: var(--hero-foreground);
+  font-size: 22px;
+  font-weight: 850;
 }
 .sorted-block {
   margin: auto;
-  margin-right: 15px;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--hero-default-500);
+  font-weight: 700;
 }
 </style>

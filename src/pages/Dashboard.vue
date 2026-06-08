@@ -2,8 +2,11 @@
   <notifications position="bottom right" />
   <div class="settings-tabs">
     <div class="header-block">
-      <img class="d-inline-block logo" height="30" src="../assets/icons/48x48.png" />
-      <p class="d-inline-block title">Web Activity Time Tracker</p>
+      <span class="brand-icon"><TablerIcon name="stopwatch" :size="34" :stroke="2.2" /></span>
+      <div class="brand-text">
+        <p class="eyebrow">{{ t('settings.message') }}</p>
+        <p class="d-inline-block title">Web Activity Time Tracker</p>
+      </div>
     </div>
     <div class="settings-tab mt-20">
       <input
@@ -14,7 +17,7 @@
         v-on:change="selectTab(SettingsTab.Dashboard)"
       />
       <label name="tabName" for="timeIntervalChart-tab"
-        ><img src="../assets/icons/s-dashboard.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="layout-dashboard" :size="30" />{{
           t('dashboard.message')
         }}</label
       >
@@ -31,13 +34,32 @@
     <div class="settings-tab">
       <input
         type="radio"
+        id="sync-tab"
+        name="settings-group"
+        :checked="selectedTab == SettingsTab.Sync"
+        v-on:change="selectTab(SettingsTab.Sync)"
+      />
+      <label name="tabName" for="sync-tab"
+        ><TablerIcon class="nav-icon" name="devices" :size="30" />Sync & devices</label
+      >
+
+      <div class="settings-content">
+        <div class="main">
+          <SyncSettings v-if="selectedTab == SettingsTab.Sync" />
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-tab">
+      <input
+        type="radio"
         id="white-list-tab"
         name="settings-group"
         :checked="selectedTab == SettingsTab.WhiteList"
         v-on:change="selectTab(SettingsTab.WhiteList)"
       />
       <label name="tabName" for="white-list-tab"
-        ><img src="../assets/icons/s-whitelist.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="eye" :size="30" />{{
           t('whiteListSettings.message')
         }}</label
       >
@@ -58,7 +80,7 @@
         v-on:change="selectTab(SettingsTab.Limits)"
       />
       <label name="tabName" for="limits-tab"
-        ><img src="../assets/icons/s-limits.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="hourglass-empty" :size="30" />{{
           t('limitsSettings.message')
         }}</label
       >
@@ -78,7 +100,7 @@
         v-on:change="selectTab(SettingsTab.Notifications)"
       />
       <label name="tabName" for="notification-tab"
-        ><img src="../assets/icons/s-notifications.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="bell" :size="30" />{{
           t('notificationsSettings.message')
         }}</label
       >
@@ -99,7 +121,7 @@
         v-on:change="selectTab(SettingsTab.Pomodoro)"
       />
       <label name="tabName" for="pomodoro-tab"
-        ><img src="../assets/icons/pomodoro.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="clock-play" :size="30" />{{
           t('pomodoroMode.message')
         }}</label
       >
@@ -120,7 +142,7 @@
         v-on:change="selectTab(SettingsTab.GeneralSettings)"
       />
       <label name="tabName" for="general-tab"
-        ><img src="../assets/icons/s-settings.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="settings" :size="30" />{{
           t('generalSettings.message')
         }}</label
       >
@@ -141,7 +163,7 @@
         v-on:change="selectTab(SettingsTab.About)"
       />
       <label class="about" name="tabName" for="about-tab"
-        ><img src="../assets/icons/s-about.svg" height="30" />{{
+        ><TablerIcon class="nav-icon" name="user-circle" :size="30" />{{
           t('aboutSettings.message')
         }}</label
       >
@@ -162,7 +184,9 @@
         v-on:change="selectTab(SettingsTab.Donate)"
       />
       <label name="tabName" for="donate-tab" class="donate"
-        ><img src="../assets/icons/donate.png" height="30" />{{ t('donate.message') }}</label
+        ><TablerIcon class="nav-icon" name="heart-handshake" :size="30" />{{
+          t('donate.message')
+        }}</label
       >
 
       <div class="settings-content">
@@ -185,6 +209,7 @@ import WhiteList from '../components/WhiteList.vue';
 import Limits from '../components/Limits.vue';
 import DailyNotifications from '../components/Notifications.vue';
 import Pomodoro from '../components/Pomodoro.vue';
+import SyncSettings from '../components/SyncSettings.vue';
 import About from '../components/About.vue';
 import { SettingsTab } from '../utils/enums';
 import DashboadContainer from '../components/DashboadContainer.vue';
@@ -194,6 +219,7 @@ import { applyDarkMode } from '../utils/dark-mode';
 import { injectStorage } from '../storage/inject-storage';
 import { StorageParams, DARK_MODE_DEFAULT } from '../storage/storage-params';
 import Donation from '../components/Donation.vue';
+import TablerIcon from '../components/TablerIcon.vue';
 
 const { t } = useI18n();
 const extensionPage = useExtensionPage();
@@ -230,6 +256,7 @@ function getCurrentTab() {
       );
     }
   }
+  if (selectedTab.value == undefined) selectedTab.value = SettingsTab.Dashboard;
 }
 
 function selectTab(value: SettingsTab) {
@@ -241,20 +268,47 @@ function selectTab(value: SettingsTab) {
 
 <style scoped>
 .main {
-  width: 80%;
-  margin: auto;
+  width: min(980px, 100%);
+  margin: 0;
 }
 .header-block {
-  background-color: unset !important;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 292px;
+  padding: 20px 16px 18px;
+  background-color: transparent !important;
 }
 .header-block .title {
   vertical-align: top;
-  margin-top: 15px;
-  font-weight: 600;
+  margin: 0;
+  font-weight: 800;
   font-size: 15px;
+  line-height: 1.2;
+  color: var(--hero-foreground);
 }
-.header-block .logo {
-  margin: 10px 10px 10px 15px;
+.header-block .eyebrow {
+  margin: 0 0 4px;
+  color: var(--hero-default-500);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+.header-block .brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0;
+  border-radius: 12px;
+  color: var(--hero-primary);
+  background: var(--hero-primary-soft);
+  border: 1px solid rgba(0, 111, 238, 0.18);
+  box-shadow: 0 8px 18px rgba(0, 111, 238, 0.18);
+}
+.header-block .brand-text {
+  min-width: 0;
 }
 .tab-separator {
   margin-left: 10px;
@@ -262,11 +316,9 @@ function selectTab(value: SettingsTab) {
   font-weight: 600;
 }
 .about {
-  position: fixed;
-  bottom: 20px;
+  width: 260px !important;
 }
 .donate {
-  position: fixed;
-  bottom: 75px;
+  width: 260px !important;
 }
 </style>

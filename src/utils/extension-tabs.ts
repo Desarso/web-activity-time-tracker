@@ -6,6 +6,8 @@ export function getStringTab(tab: SettingsTab) {
       return 'dashboard';
     case SettingsTab.WebsiteStats:
       return 'website-stats';
+    case SettingsTab.Sync:
+      return 'sync';
     case SettingsTab.GeneralSettings:
       return 'settings';
     case SettingsTab.About:
@@ -29,6 +31,8 @@ export function getEnumValueTab(tab: string) {
       return SettingsTab.Dashboard;
     case 'website-stats':
       return SettingsTab.WebsiteStats;
+    case 'sync':
+      return SettingsTab.Sync;
     case 'settings':
       return SettingsTab.GeneralSettings;
     case 'about':

@@ -55,7 +55,7 @@ function refreshChart() {
     labels: labelsForChart.value,
     datasets: [
       {
-        backgroundColor: ['#5668e2'],
+        backgroundColor: ['#006fee'],
         data: dataForChart.value,
       },
     ],

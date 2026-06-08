@@ -5,6 +5,11 @@ export enum TypeOfList {
   Dashboard,
 }
 
+export enum ActivityScope {
+  Normal,
+  Incognito,
+}
+
 export enum SortingBy {
   UsageTime,
   Sessions,
@@ -13,6 +18,7 @@ export enum SortingBy {
 export enum SettingsTab {
   Dashboard,
   WebsiteStats,
+  Sync,
   GeneralSettings,
   WhiteList,
   Limits,

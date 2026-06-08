@@ -31,6 +31,13 @@ export enum StorageParams {
   POMODORO_FREQUENCY = 'pomodoro-frequency',
   PROMO_CLEAR_YOUTUBE_DATE = 'promo-clear-youtube-date',
   PROMO_CLEAR_YOUTUBE_PROMPT_AT = 'promo-clear-youtube-prompt-at',
+  SYNC_DEVICE_ID = 'sync-device-id',
+  SYNC_DEVICE_NAME = 'sync-device-name',
+  SYNC_ENABLED = 'sync-enabled',
+  SYNC_SESSION_TOKEN = 'sync-session-token',
+  SYNC_USER = 'sync-user',
+  SYNC_API_BASE_URL = 'sync-api-base-url',
+  SYNC_LAST_SYNC_AT = 'sync-last-sync-at',
 }
 
 export enum StorageDeserializeParam {
@@ -81,6 +88,8 @@ export const POMODORO_FREQUENCY_DEFAULT = 3;
 export const POMODORO_AUDIO_AFTER_WORK_DEFAULT = PomodoroSounds['Sound 3'];
 export const POMODORO_AUDIO_AFTER_REST_DEFAULT = PomodoroSounds['Sound 8'];
 export const POMODORO_AUDIO_AFTER_FINISHED_DEFAULT = PomodoroSounds['Sound 10'];
+export const SYNC_ENABLED_DEFAULT = false;
+export const SYNC_API_BASE_URL_DEFAULT = 'http://localhost:8787';
 
 export function getDefaultValue(param: StorageParams) {
   switch (param) {
@@ -125,5 +134,19 @@ export function getDefaultValue(param: StorageParams) {
       return POMODORO_AUDIO_AFTER_REST_DEFAULT;
     case StorageParams.POMODORO_AUDIO_AFTER_FINISHED:
       return POMODORO_AUDIO_AFTER_FINISHED_DEFAULT;
+    case StorageParams.SYNC_DEVICE_ID:
+      return '';
+    case StorageParams.SYNC_DEVICE_NAME:
+      return '';
+    case StorageParams.SYNC_ENABLED:
+      return SYNC_ENABLED_DEFAULT;
+    case StorageParams.SYNC_SESSION_TOKEN:
+      return '';
+    case StorageParams.SYNC_USER:
+      return null;
+    case StorageParams.SYNC_API_BASE_URL:
+      return SYNC_API_BASE_URL_DEFAULT;
+    case StorageParams.SYNC_LAST_SYNC_AT:
+      return '';
   }
 }

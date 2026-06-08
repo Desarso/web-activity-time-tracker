@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch --mode development",
+    "backend": "node backend/server.mjs",
+    "backend:dev": "node --watch backend/server.mjs",
+    "open:extension-install": "node scripts/open-extension-install-pages.mjs",
     "start": "vite build --watch --mode production",
     "format": "prettier --write .",
     "script:zip": "vite build --mode production && powershell scripts/zip.ps1"

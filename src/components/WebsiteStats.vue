@@ -131,14 +131,26 @@ async function handleDate(modelData: Date[]) {
 <style scoped>
 .link {
   cursor: pointer;
-  color: grey;
-  text-decoration: underline;
+  color: var(--hero-primary);
+  text-decoration: none;
 }
 .date-block {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 .by-days-chart {
   height: 400px;
+  padding: 18px;
+  background: var(--hero-content1);
+  border: 1px solid var(--hero-default-200);
+  border-radius: var(--hero-radius-lg);
+  box-shadow: var(--hero-shadow-sm);
 }
 </style>

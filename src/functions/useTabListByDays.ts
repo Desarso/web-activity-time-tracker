@@ -2,13 +2,15 @@ import { CurrentTabItem } from '../dto/currentTabItem';
 import { DayTabs, TabListByDays } from '../dto/tabListSummary';
 import { injectTabsRepository } from '../repository/inject-tabs-repository';
 import { isSameDay } from 'date-fns';
+import { ActivityScope } from '../utils/enums';
 
 export async function useTabListByDays(
   dateFrom: Date,
   dateTo: Date,
+  scope: ActivityScope = ActivityScope.Normal,
 ): Promise<TabListByDays | null> {
   const repo = await injectTabsRepository();
-  const unSortedTabs = repo.getTabs();
+  const unSortedTabs = repo.getTabsByScope(scope);
   let daysTabs: DayTabs[] = [];
 
   if (unSortedTabs.length == 0) return null;
@@ -48,17 +50,19 @@ export async function useTabListByDays(
             url: tab.url,
             sessions: day.counter,
             summaryTime: day.summary,
+            incognito: tab.incognito,
           });
           daysTabs.push(dayTab);
         } else {
           dayTab.time += day.summary;
           dayTab.sessions += day.counter;
           dayTab.tabs.push({
-            favicon: tab.favicon,
-            url: tab.url,
-            sessions: day.counter,
-            summaryTime: day.summary,
-          });
+          favicon: tab.favicon,
+          url: tab.url,
+          sessions: day.counter,
+          summaryTime: day.summary,
+          incognito: tab.incognito,
+        });
         }
       }
     });
