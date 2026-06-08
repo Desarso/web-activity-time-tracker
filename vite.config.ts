@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import path from 'path';
 import vue from '@vitejs/plugin-vue';
 import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
@@ -13,17 +13,17 @@ const browser = process.env.TARGET || 'chrome';
 const LOCAL_DEV_EXTENSION_PUBLIC_KEY =
   'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1Mq6E7bZfBYXE4FdHSNprD9a9Q+mzF14Hi24WaM7BCb+2dQaCKTMh5x/MRoyxKyMPJuzmXEqDp23uaPCpXozi9SV5Nv3nPWpV6XEGM+fu7i62zwpQqchv4kwbxJGS79zeWlGaEGLnrtV16i+INz9CQpUKZhHWLRuRa+OulUyq0iN5i1PrLkJ8jO5FWZtsVIX8mfn12FQp7wmiw0jjG1fMzsBa8mFE7VMSO76pkOSGrJmKtWtJfPKBhcrBI9J8YaWhqOinth8eYbdporkXOcU5q1RMwQqPaujMuUDqTrc0kHhaUwi1cX+iZrRL9MFij4zC0GK7wAFS7SeGz46H29ikwIDAQAB';
 
-function generateManifest(mode: string) {
+function generateManifest(mode: string, env: Record<string, string>) {
   const manifest = readJsonFile('src/manifest.json');
   const pkg = readJsonFile('package.json');
   const googleOAuthClientId =
-    process.env.VITE_GOOGLE_OAUTH_CLIENT_ID ||
-    process.env.GOOGLE_OAUTH_CLIENT_ID ||
-    process.env.GOOGLE_OAUTH_CLIENT_IDS?.split(',')[0]?.trim() ||
+    env.VITE_GOOGLE_OAUTH_CLIENT_ID ||
+    env.GOOGLE_OAUTH_CLIENT_ID ||
+    env.GOOGLE_OAUTH_CLIENT_IDS?.split(',')[0]?.trim() ||
     manifest.oauth2?.client_id;
   const extensionPublicKey =
-    process.env.VITE_EXTENSION_PUBLIC_KEY ||
-    process.env.EXTENSION_PUBLIC_KEY ||
+    env.VITE_EXTENSION_PUBLIC_KEY ||
+    env.EXTENSION_PUBLIC_KEY ||
     (mode === 'development' ? LOCAL_DEV_EXTENSION_PUBLIC_KEY : '');
 
   return {
@@ -40,7 +40,9 @@ function generateManifest(mode: string) {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
   build: {
     assetsInlineLimit: 1024,
     rollupOptions: {
@@ -73,7 +75,7 @@ export default defineConfig(({ mode }) => ({
       include: path.resolve(__dirname, '..', 'src/assets/_locales/*'),
     }),
     webExtension({
-      manifest: () => generateManifest(mode),
+      manifest: () => generateManifest(mode, env),
       watchFilePaths: ['package.json', 'src/manifest.json'],
       additionalInputs: ['src/block.html', 'src/welcome.html', 'src/offscreen.html'],
     }),
@@ -87,4 +89,5 @@ export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     include: ['vue', 'webextension-polyfill'],
   },
-}));
+};
+});
