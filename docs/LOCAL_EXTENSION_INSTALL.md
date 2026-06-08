@@ -100,6 +100,11 @@ Hosted backend deployment notes live in `docs/TRACKER_BACKEND_DEPLOYMENT.md`.
 
 ## Google Login
 
+Two IDs matter here:
+
+- Extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`
+- OAuth client ID: the Google-created value ending in `.apps.googleusercontent.com`
+
 Before sign-in works, create a Google OAuth client for the local extension:
 
 1. In Google Cloud Console, open APIs & Services.
@@ -108,6 +113,12 @@ Before sign-in works, create a Google OAuth client for the local extension:
 4. Use this extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`.
 5. Rebuild with `VITE_GOOGLE_OAUTH_CLIENT_ID=<client-id>`.
 6. Reload the unpacked extension in every browser.
+
+Recommended Console URL if using the existing auth project:
+
+```text
+https://console.cloud.google.com/auth/clients?project=gabrielmalekoauth
+```
 
 Pass the same client ID to the backend. If you later create different clients for browser variants, pass all client IDs as a comma-separated list:
 

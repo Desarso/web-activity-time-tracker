@@ -80,6 +80,33 @@ Use `/api/health` for Coolify health checks.
 
 The extension defaults to `https://tracker.gabrielmalek.com`.
 
+## Google OAuth Setup
+
+There are two IDs involved:
+
+- Extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`
+- OAuth client ID: the Google-created value ending in `.apps.googleusercontent.com`
+
+Use the extension ID when creating the OAuth client. Use the OAuth client ID when building the extension and configuring the backend.
+
+Recommended Google Cloud project, if no tracker-specific project has been created yet:
+
+```text
+gabrielmalekoauth
+```
+
+Create the OAuth client:
+
+1. Open `https://console.cloud.google.com/auth/clients?project=gabrielmalekoauth`.
+2. If prompted, configure Google Auth Platform / OAuth consent first.
+3. Create a client.
+4. Application type: `Chrome Extension`.
+5. Name: `Web Activity Time Tracker Local`.
+6. Application ID / Extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`.
+7. Copy the generated OAuth client ID ending in `.apps.googleusercontent.com`.
+
+The active local `gcloud` project may be unrelated. On 2026-06-08 it was `workout-app-56f96`, so do not rely on the active CLI project for tracker OAuth setup.
+
 Build with the Google OAuth client ID:
 
 ```bash
