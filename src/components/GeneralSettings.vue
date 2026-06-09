@@ -1,64 +1,36 @@
 <template>
   <div class="settings-item">
-    <label class="setting-header">
-      <input
-        type="checkbox"
-        class="filled-in"
-        id="viewTimeInBadge"
-        v-model="viewTimeInBadge"
-        @change="onChange(StorageParams.VIEW_TIME_IN_BADGE, $event.target)"
-      />
-      <span>{{ t('viewTimeInBadge.message') }}</span>
-      <p class="description">
-        {{ t('viewTimeInBadge.description') }}
-      </p>
-    </label>
+    <HeroCheckbox
+      v-model="viewTimeInBadge"
+      :label="t('viewTimeInBadge.message')"
+      :description="t('viewTimeInBadge.description')"
+      @change="save(StorageParams.VIEW_TIME_IN_BADGE, $event)"
+    />
   </div>
   <div class="settings-item">
-    <label class="setting-header">
-      <input
-        type="checkbox"
-        class="filled-in"
-        id="blockDeferral"
-        v-model="allowDeferringBlock"
-        @change="onChange(StorageParams.BLOCK_DEFERRAL, $event.target)"
-      />
-      <span>{{ t('allowDeferringBlock.message') }}</span>
-      <p class="description">
-        {{ t('allowDeferringBlock.description') }}
-      </p>
-    </label>
+    <HeroCheckbox
+      v-model="allowDeferringBlock"
+      :label="t('allowDeferringBlock.message')"
+      :description="t('allowDeferringBlock.description')"
+      @change="save(StorageParams.BLOCK_DEFERRAL, $event)"
+    />
   </div>
   <div class="settings-item">
-    <label class="setting-header">
-      <input
-        type="checkbox"
-        class="filled-in"
-        id="darkMode"
-        v-model="darkMode"
-        @change="onChange(StorageParams.DARK_MODE, $event.target)"
-      />
-      <span>{{ t('darkTheme.message') }}</span>
-    </label>
+    <HeroCheckbox
+      v-model="darkMode"
+      :label="t('darkTheme.message')"
+      @change="saveDarkMode($event)"
+    />
   </div>
   <div class="settings-item">
-    <label class="setting-header d-inline-block">{{ t('intervalInactivity.message') }} </label>
-    <div class="d-inline-block ml-10">
-      <select
-        class="option"
-        v-model="intervalInactivity"
-        @change="onChange(StorageParams.INTERVAL_INACTIVITY, $event.target)"
-      >
-        <option :value="InactivityInterval.Seconds_30">30 {{ t('sec.message') }}</option>
-        <option :value="InactivityInterval.Seconds_45">45 {{ t('sec.message') }}</option>
-        <option :value="InactivityInterval.Min_1">1 {{ t('min.message') }}</option>
-        <option :value="InactivityInterval.Min_2">2 {{ t('2min.message') }}</option>
-        <option :value="InactivityInterval.Min_5">5 {{ t('mins.message') }}</option>
-        <option :value="InactivityInterval.Min_10">10 {{ t('mins.message') }}</option>
-        <option :value="InactivityInterval.Min_20">20 {{ t('mins.message') }}</option>
-        <option :value="InactivityInterval.Min_30">30 {{ t('mins.message') }}</option>
-      </select>
-    </div>
+    <label class="setting-header d-inline-block">{{ t('intervalInactivity.message') }}</label>
+    <HeroSelect
+      class="inactivity-select"
+      v-model="intervalInactivity"
+      :options="inactivityOptions"
+      :aria-label="t('intervalInactivity.message')"
+      @change="save(StorageParams.INTERVAL_INACTIVITY, Number($event))"
+    />
     <p class="description">{{ t('intervalInactivity.description') }}</p>
   </div>
   <div class="settings-item">
@@ -77,18 +49,21 @@
           <span @click="presetDateRange(range)">{{ label }}</span>
         </template>
       </VueDatePicker>
-      <input type="button" :value="t('exportToCsv.message')" @click="exportToCsv()" />
+      <HeroButton variant="primary" @click="exportToCsv()">{{ t('exportToCsv.message') }}</HeroButton>
     </div>
   </div>
   <div class="settings-item">
     <label class="setting-header d-inline-block">{{ t('removeAllData.message') }}</label>
     <p class="description">{{ t('removeAllData.description') }}</p>
-    <input type="button" :value="t('remove.message')" @click="removeAll()" />
+    <HeroButton variant="danger" @click="removeAll()">{{ t('remove.message') }}</HeroButton>
   </div>
   <div class="settings-item">
     <label class="setting-header d-inline-block">{{ t('backupAndRestore.message') }}</label>
     <p class="description">{{ t('backupAndRestore.description') }}</p>
-    <input type="button" :value="t('backup.message')" @click="backup()" />
+    <div class="button-row">
+      <HeroButton variant="secondary" @click="backup()">{{ t('backup.message') }}</HeroButton>
+      <HeroButton variant="secondary" @click="restore()">{{ t('restore.message') }}</HeroButton>
+    </div>
     <input
       type="file"
       ref="restoreFile"
@@ -96,34 +71,21 @@
       @change="restoreFileUpload()"
       accept="application/json"
     />
-    <input type="button" class="ml-10" :value="t('restore.message')" @click="restore()" />
   </div>
   <div class="settings-item">
-    <label class="setting-header">
-      <input
-        type="checkbox"
-        class="filled-in"
-        id="showChangelog"
-        v-model="showChangelog"
-        @change="onChange(StorageParams.SHOW_CHANGELOG, $event.target)"
-      />
-      <span>{{ t('showChangelog.message') }}</span>
-      <p class="description">
-        {{ t('showChangelog.description') }}
-      </p>
-    </label>
+    <HeroCheckbox
+      v-model="showChangelog"
+      :label="t('showChangelog.message')"
+      :description="t('showChangelog.description')"
+      @change="save(StorageParams.SHOW_CHANGELOG, $event)"
+    />
   </div>
   <div id="removeAllConfirmModal" class="modal" v-if="needToConfirmDeleteAllData">
     <div class="modal-content">
       <p class="text-center">{{ t('removeAllDataConfirm.message') }}</p>
       <div class="text-center">
-        <input
-          type="button"
-          class="alert"
-          :value="t('remove.message')"
-          @click="removeAllConfirm()"
-        />
-        <input type="button" class="info ml-10" :value="t('cancel.message')" @click="cancel()" />
+        <HeroButton variant="danger" @click="removeAllConfirm()">{{ t('remove.message') }}</HeroButton>
+        <HeroButton variant="secondary" @click="cancel()">{{ t('cancel.message') }}</HeroButton>
       </div>
     </div>
   </div>
@@ -136,7 +98,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { injectStorage } from '../storage/inject-storage';
 import { useNotification } from '@kyvg/vue3-notification';
@@ -156,6 +118,9 @@ import { useRemoveAllData } from '../functions/useRemoveAllData';
 import { injectTabsRepository } from '../repository/inject-tabs-repository';
 import { useRestoreData } from '../functions/useRestoreData';
 import { applyDarkMode } from '../utils/dark-mode';
+import HeroButton from './HeroButton.vue';
+import HeroCheckbox from './HeroCheckbox.vue';
+import HeroSelect from './HeroSelect.vue';
 
 const { t } = useI18n();
 
@@ -174,6 +139,16 @@ const needToConfirmDeleteAllData = ref<boolean>();
 const showChangelog = ref<boolean>();
 
 const restoreFile = ref<any>();
+const inactivityOptions = computed(() => [
+  { value: InactivityInterval.Seconds_30, label: `30 ${t('sec.message')}` },
+  { value: InactivityInterval.Seconds_45, label: `45 ${t('sec.message')}` },
+  { value: InactivityInterval.Min_1, label: `1 ${t('min.message')}` },
+  { value: InactivityInterval.Min_2, label: `2 ${t('2min.message')}` },
+  { value: InactivityInterval.Min_5, label: `5 ${t('mins.message')}` },
+  { value: InactivityInterval.Min_10, label: `10 ${t('mins.message')}` },
+  { value: InactivityInterval.Min_20, label: `20 ${t('mins.message')}` },
+  { value: InactivityInterval.Min_30, label: `30 ${t('mins.message')}` },
+]);
 
 onMounted(async () => {
   viewTimeInBadge.value = await settingsStorage.getValue(
@@ -196,18 +171,13 @@ onMounted(async () => {
   );
 });
 
-async function onChange(storageParam: StorageParams, target: any) {
-  if (target != null)
-    await save(
-      storageParam,
-      storageParam == StorageParams.INTERVAL_INACTIVITY ? Number(target.value) : target.checked,
-    );
-
-  if (storageParam == StorageParams.DARK_MODE) applyDarkMode(target.checked);
-}
-
 async function save(storageParam: StorageParams, value: any) {
   if (value != undefined) await settingsStorage.saveValue(storageParam, value);
+}
+
+async function saveDarkMode(value: boolean) {
+  await save(StorageParams.DARK_MODE, value);
+  applyDarkMode(value);
 }
 
 async function handleDate(modelData: Date[]) {
@@ -295,6 +265,20 @@ function restoreFileUpload() {
   background: var(--hero-default-100);
   border: 1px solid var(--hero-default-200);
   border-radius: var(--hero-radius-lg);
+}
+
+.inactivity-select {
+  display: block;
+  width: 220px;
+  margin-top: 12px;
+}
+
+.button-row,
+.text-center {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .export-block .date-picker {

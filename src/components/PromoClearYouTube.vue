@@ -4,7 +4,9 @@
       <img src="../assets/icons/clear-youtube-logo.svg" height="45" />
     </div>
     <p>{{ t('promoClearYoutube.message') }}</p>
-    <input type="button" :value="t('promoClearYoutube.description')" @click="openStore()" />
+    <HeroButton variant="primary" @click="openStore()">
+      {{ t('promoClearYoutube.description') }}
+    </HeroButton>
     <button class="close-action" type="button" @click="closeBlock()">
       <TablerIcon name="x" :size="18" />
     </button>
@@ -26,6 +28,7 @@ import { CHROME_STORE_CLEAR_YOUTUBE_URL } from '../utils/chrome-url';
 import { usePromoExtension } from '../compositions/usePromoExtension';
 import { computedAsync } from '@vueuse/core';
 import { useExtensionPage } from '../compositions/useExtensionPage';
+import HeroButton from './HeroButton.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();

@@ -38,7 +38,9 @@
             <span @click="presetDateRange(range)">{{ label }}</span>
           </template>
         </VueDatePicker>
-        <input type="button" :value="t('exportToCsv.message')" @click="exportToCsv()" />
+        <HeroButton variant="primary" @click="exportToCsv()">
+          {{ t('exportToCsv.message') }}
+        </HeroButton>
       </div>
 
       <div class="stats-block block">
@@ -89,6 +91,7 @@ export default {
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TabItem from '../components/TabItem.vue';
+import HeroButton from './HeroButton.vue';
 import NoDataByDays from './NoDataByDays.vue';
 import ByDaysChart from '../components/ByDaysChart.vue';
 import Expander from '../components/Expander.vue';

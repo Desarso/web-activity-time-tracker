@@ -12,20 +12,18 @@
         </div>
       </li>
     </ul>
-    <div class="mt-20">
-      <input
-        type="text"
-        class="d-inline-block custom-width"
+    <div class="add-site-row mt-20">
+      <HeroInput
         :placeholder="t('enterWebsite.message')"
         v-model="newWebsiteForWhiteList"
       />
-      <input
-        type="button"
-        class="d-inline-block small-btn ml-10"
-        :value="t('addWebsite.message')"
+      <HeroButton
+        variant="primary"
         :disabled="newWebsiteForWhiteList == null || newWebsiteForWhiteList == ''"
         @click="addToWhiteList()"
-      />
+      >
+        {{ t('addWebsite.message') }}
+      </HeroButton>
     </div>
   </div>
 </template>
@@ -47,6 +45,8 @@ import { injectStorage } from '../storage/inject-storage';
 import { StorageParams } from '../storage/storage-params';
 import { isDomainEquals } from '../utils/common';
 import { extractHostname } from '../utils/extract-hostname';
+import HeroButton from './HeroButton.vue';
+import HeroInput from './HeroInput.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
@@ -96,8 +96,12 @@ async function save(value: any) {
   display: block;
 }
 
-.custom-width {
-  width: 538px;
+.add-site-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  max-width: 670px;
 }
 
 .icon-action {

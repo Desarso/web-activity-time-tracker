@@ -2,12 +2,13 @@
   <div>
     <p class="description d-inline-block">{{ t('intervalsChart.message') }}</p>
     <div class="d-inline-block mr-10 ml-10">
-      <select class="option" v-model="minValue" @change="refreshChart()">
-        <option :value="MinValue.Seconds_10">10 {{ t('sec.message') }}</option>
-        <option :value="MinValue.Min_1">1 {{ t('min.message') }}</option>
-        <option :value="MinValue.Min_5">5 {{ t('2min.message') }}</option>
-        <option :value="MinValue.Min_10">10 {{ t('mins.message') }}</option>
-      </select>
+      <HeroSelect
+        class="interval-select"
+        v-model="minValue"
+        :options="minValueOptions"
+        :aria-label="t('intervalsChart.message')"
+        @change="refreshChart()"
+      />
     </div>
     <p class="description d-inline-block">{{ t('intervalsChart.description') }}</p>
   </div>
@@ -21,7 +22,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { injectStorage } from '../storage/inject-storage';
 import {
   DARK_MODE_DEFAULT,
@@ -33,6 +34,7 @@ import { todayLocalDate } from '../utils/date';
 import { useI18n } from 'vue-i18n';
 import * as d3 from 'd3';
 import { convertStringTimeIntervalToSeconds } from '../utils/converter';
+import HeroSelect from './HeroSelect.vue';
 
 enum MinValue {
   Seconds_10 = 10,
@@ -48,6 +50,12 @@ const chart = ref<any>();
 const minValue = ref<number>();
 const todayIntervals = ref<TimeInterval[]>();
 const darkMode = ref();
+const minValueOptions = computed(() => [
+  { value: MinValue.Seconds_10, label: `10 ${t('sec.message')}` },
+  { value: MinValue.Min_1, label: `1 ${t('min.message')}` },
+  { value: MinValue.Min_5, label: `5 ${t('2min.message')}` },
+  { value: MinValue.Min_10, label: `10 ${t('mins.message')}` },
+]);
 
 type DataForChart = {
   domain: string;

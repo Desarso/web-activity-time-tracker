@@ -1,32 +1,25 @@
 <template>
   <div class="limits-time-block mb-20">
-    <input
-      type="text"
+    <HeroInput
       :disabled="isEdit"
-      class="d-inline-block"
       :placeholder="t('enterWebsite.message')"
       v-model="newWebsiteForList"
     />
     <VueDatePicker v-model="time" time-picker class="date-picker height" />
-    <input
-      type="button"
-      class="d-inline-block small-btn"
-      :value="!isEdit ? t('addWebsite.message') : t('save.message')"
+    <HeroButton
+      variant="primary"
       :disabled="isDisabledSaving"
       @click="isEdit ? editItem() : addToList()"
-    />
+    >
+      {{ !isEdit ? t('addWebsite.message') : t('save.message') }}
+    </HeroButton>
   </div>
   <div class="mt-10" v-if="showCompletelyBlockValue">
-    <label class="block-checkbox">
-      <input
-        type="checkbox"
-        class="filled-in"
-        id="viewTimeInBadge"
-        v-model="isCheckedCompletelyBlocked"
-        @change="completelyBlock"
-      />
-      <span>{{ t('completelyBlocked.description') }}</span>
-    </label>
+    <HeroCheckbox
+      :model-value="isCheckedCompletelyBlocked"
+      :label="t('completelyBlocked.description')"
+      @change="completelyBlock"
+    />
   </div>
   <ul readonly class="url-list">
     <li v-for="(limit, i) of list" :key="i">
@@ -74,6 +67,9 @@ import { convertHHMMToSeconds, convertSecondsToHHMM } from '../utils/converter';
 import { Restriction } from '../entity/restriction';
 import { BaseTimeList } from '../entity/baseTimeList';
 import { Notifications } from '../entity/notification';
+import HeroButton from './HeroButton.vue';
+import HeroCheckbox from './HeroCheckbox.vue';
+import HeroInput from './HeroInput.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
@@ -201,8 +197,8 @@ async function save(value: any) {
 
 <style scoped>
 .limits-time-block {
-  display: flex;
-  justify-content: start;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 120px auto;
   align-items: center;
   gap: 12px;
   padding: 14px;

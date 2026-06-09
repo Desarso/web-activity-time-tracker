@@ -154,48 +154,6 @@
       </div>
     </div>
 
-    <div class="settings-tab">
-      <input
-        type="radio"
-        id="about-tab"
-        name="settings-group"
-        :checked="selectedTab == SettingsTab.About"
-        v-on:change="selectTab(SettingsTab.About)"
-      />
-      <label class="about" name="tabName" for="about-tab"
-        ><TablerIcon class="nav-icon" name="user-circle" :size="30" />{{
-          t('aboutSettings.message')
-        }}</label
-      >
-
-      <div class="settings-content">
-        <div class="main">
-          <About v-if="selectedTab == SettingsTab.About" />
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-tab">
-      <input
-        type="radio"
-        id="donate-tab"
-        name="settings-group"
-        :checked="selectedTab == SettingsTab.Donate"
-        v-on:change="selectTab(SettingsTab.Donate)"
-      />
-      <label name="tabName" for="donate-tab" class="donate"
-        ><TablerIcon class="nav-icon" name="heart-handshake" :size="30" />{{
-          t('donate.message')
-        }}</label
-      >
-
-      <div class="settings-content">
-        <div class="main">
-          <Donation v-if="selectedTab == SettingsTab.Donate" />
-        </div>
-      </div>
-    </div>
-
     <PromoCleanYoutubeModal />
   </div>
 </template>
@@ -210,7 +168,6 @@ import Limits from '../components/Limits.vue';
 import DailyNotifications from '../components/Notifications.vue';
 import Pomodoro from '../components/Pomodoro.vue';
 import SyncSettings from '../components/SyncSettings.vue';
-import About from '../components/About.vue';
 import { SettingsTab } from '../utils/enums';
 import DashboadContainer from '../components/DashboadContainer.vue';
 import { useExtensionPage } from '../compositions/useExtensionPage';
@@ -218,7 +175,6 @@ import { getEnumValueTab } from '../utils/extension-tabs';
 import { applyDarkMode } from '../utils/dark-mode';
 import { injectStorage } from '../storage/inject-storage';
 import { StorageParams, DARK_MODE_DEFAULT } from '../storage/storage-params';
-import Donation from '../components/Donation.vue';
 import TablerIcon from '../components/TablerIcon.vue';
 
 const { t } = useI18n();
@@ -314,11 +270,5 @@ function selectTab(value: SettingsTab) {
   margin-left: 10px;
   font-size: 13px;
   font-weight: 600;
-}
-.about {
-  width: 260px !important;
-}
-.donate {
-  width: 260px !important;
 }
 </style>

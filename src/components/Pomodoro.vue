@@ -40,7 +40,12 @@
     </div>
     <div class="pomodoro-block">
       <p class="title">{{ t('pomodoroFrequency.message') }}</p>
-      <input type="number" class="frequency" v-model="frequency" />
+      <HeroInput
+        class="frequency"
+        type="number"
+        :model-value="frequency"
+        @update:model-value="frequency = Number($event)"
+      />
     </div>
     <div class="pomodoro-block">
       <PomodoroSoundsSelector
@@ -50,15 +55,26 @@
       />
     </div>
   </div>
-  <button
-    class="d-inline-block mt-15"
-    :class="[isEnabled ? 'stop' : 'start', isDisabled ? 'disabled' : '']"
+  <HeroButton
+    v-if="!isEnabled"
+    class="mt-15"
+    variant="primary"
+    :disabled="isDisabled"
+    @click="changeStatus()"
+  >
+    <TablerIcon name="player-play" :size="20" />
+    {{ t('start.message') }}
+  </HeroButton>
+  <HeroButton
+    v-else
+    class="mt-15"
+    variant="danger"
+    :disabled="isDisabled"
     @click="changeStatus()"
   >
     <TablerIcon v-if="isEnabled" name="player-stop" :size="20" />
-    <TablerIcon v-if="!isEnabled" name="player-play" :size="20" />
-    {{ !isEnabled ? t('start.message') : t('stop.message') }}
-  </button>
+    {{ t('stop.message') }}
+  </HeroButton>
 </template>
 
 <script lang="ts">
@@ -88,6 +104,8 @@ import { useBadge, BadgeColor, BadgeIcon } from '../functions/useBadge';
 import { PomodoroSounds } from '../utils/pomodoro';
 import PomodoroSoundsSelector from '../components/PomodoroSoundsSelector.vue';
 import Browser from 'webextension-polyfill';
+import HeroButton from './HeroButton.vue';
+import HeroInput from './HeroInput.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
@@ -206,10 +224,7 @@ function playAudio(sound: PomodoroSounds) {
   padding: 10px 0;
 }
 .frequency {
-  width: 50px;
-  padding: 5px 10px;
-  height: 20px;
-  margin: auto 0;
+  width: 90px;
   margin-left: 15px;
 }
 .blocked {

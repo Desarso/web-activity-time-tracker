@@ -13,21 +13,21 @@
         </p>
       </div>
       <div class="sync-actions">
-        <button v-if="!session" class="primary" :disabled="isBusy" @click="connectGoogle()">
+        <HeroButton v-if="!session" variant="primary" :disabled="isBusy" @click="connectGoogle()">
           <TablerIcon name="cloud" :size="18" />
           Continue with Google
-        </button>
-        <button v-if="session" class="primary" :disabled="isBusy" @click="syncNow()">
+        </HeroButton>
+        <HeroButton v-if="session" variant="primary" :disabled="isBusy" @click="syncNow()">
           <TablerIcon name="upload" :size="18" />
           Sync this browser
-        </button>
-        <button v-if="session" class="secondary" :disabled="isBusy" @click="loadCloud()">
+        </HeroButton>
+        <HeroButton v-if="session" variant="secondary" :disabled="isBusy" @click="loadCloud()">
           <TablerIcon name="download" :size="18" />
           Refresh cloud
-        </button>
-        <button v-if="session" class="secondary danger" :disabled="isBusy" @click="disconnect()">
+        </HeroButton>
+        <HeroButton v-if="session" variant="danger" :disabled="isBusy" @click="disconnect()">
           Sign out
-        </button>
+        </HeroButton>
       </div>
     </section>
 
@@ -68,29 +68,16 @@
         </div>
         <div class="panel-actions">
           <span class="chip success">Current</span>
-          <button class="secondary compact" :disabled="isBusy" @click="refreshDevice()">
+          <HeroButton variant="secondary" size="sm" :disabled="isBusy" @click="refreshDevice()">
             Reset name
-          </button>
+          </HeroButton>
         </div>
       </div>
 
       <div class="device-form">
-        <label>
-          <span>Device name</span>
-          <input type="text" v-model="deviceNameDraft" @change="saveDeviceName()" />
-        </label>
-        <label>
-          <span>Install identity</span>
-          <input type="text" :value="currentDevice.deviceId" readonly />
-        </label>
-        <label>
-          <span>Backend URL</span>
-          <input type="url" v-model="apiBaseUrlDraft" @change="saveApiBaseUrl()" />
-        </label>
-        <label>
-          <span>Last sync</span>
-          <input type="text" :value="lastSyncLabel" readonly />
-        </label>
+        <HeroInput label="Device name" v-model="deviceNameDraft" @change="saveDeviceName()" />
+        <HeroInput label="Install identity" :model-value="currentDevice.deviceId" readonly />
+        <HeroInput label="Last sync" :model-value="lastSyncLabel" readonly />
       </div>
     </section>
 
@@ -151,18 +138,19 @@ export default {
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue';
 import { injectStorage } from '../storage/inject-storage';
-import { StorageParams, SYNC_API_BASE_URL_DEFAULT } from '../storage/storage-params';
+import { StorageParams } from '../storage/storage-params';
 import {
   fetchAccount,
   fetchCloudActivity,
   getStoredSession,
-  getSyncApiBaseUrl,
   signInWithGoogle,
   signOutOfSync,
   syncCurrentSnapshot,
 } from '../backend/sync-api';
 import { getSyncDevice, refreshSyncDeviceName, saveSyncDeviceName } from '../backend/device';
 import { CloudActivity, SyncDevice, SyncSession } from '../backend/types';
+import HeroButton from './HeroButton.vue';
+import HeroInput from './HeroInput.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const storage = injectStorage();
@@ -176,7 +164,6 @@ const currentDevice = reactive<SyncDevice>({
   extensionVersion: '',
 });
 const deviceNameDraft = ref('This computer');
-const apiBaseUrlDraft = ref(SYNC_API_BASE_URL_DEFAULT);
 const lastSyncAt = ref('');
 const session = ref<SyncSession | null>(null);
 const cloudActivity = ref<CloudActivity | null>(null);
@@ -197,7 +184,6 @@ onMounted(async () => {
 async function loadLocalState() {
   Object.assign(currentDevice, await getSyncDevice());
   deviceNameDraft.value = currentDevice.name;
-  apiBaseUrlDraft.value = await getSyncApiBaseUrl();
   lastSyncAt.value = await storage.getValue(StorageParams.SYNC_LAST_SYNC_AT, '');
 }
 
@@ -254,12 +240,6 @@ async function saveDeviceName() {
 async function refreshDevice() {
   Object.assign(currentDevice, await refreshSyncDeviceName());
   deviceNameDraft.value = currentDevice.name;
-}
-
-async function saveApiBaseUrl() {
-  const cleanedUrl = apiBaseUrlDraft.value.trim().replace(/\/$/, '') || SYNC_API_BASE_URL_DEFAULT;
-  apiBaseUrlDraft.value = cleanedUrl;
-  await storage.saveValue(StorageParams.SYNC_API_BASE_URL, cleanedUrl);
 }
 
 async function runBusy(action: () => Promise<void>) {
@@ -358,48 +338,6 @@ h2 {
   justify-content: flex-end;
 }
 
-button {
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  border-radius: var(--hero-radius-md);
-  padding: 0 16px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-button.primary {
-  color: #fff;
-  background: var(--hero-primary);
-  box-shadow: 0 8px 18px rgba(0, 111, 238, 0.22);
-}
-
-button.secondary {
-  color: var(--hero-foreground);
-  background: var(--hero-default-100);
-  border: 1px solid var(--hero-default-200);
-}
-
-button.secondary.danger {
-  color: var(--hero-danger);
-}
-
-button.compact {
-  min-height: 32px;
-  padding: 0 12px;
-  font-size: 12px;
-}
-
-button:disabled {
-  color: var(--hero-default-400);
-  background: var(--hero-default-100);
-  box-shadow: none;
-  cursor: not-allowed;
-}
-
 .metric-grid,
 .sync-grid {
   display: grid;
@@ -484,24 +422,9 @@ button:disabled {
 
 .device-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
-}
-
-.device-form label {
-  display: grid;
-  gap: 8px;
-}
-
-.device-form span {
-  color: var(--hero-default-500);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.device-form input {
-  width: 100%;
 }
 
 .record-list {

@@ -4,7 +4,9 @@
     <button class="close-action" type="button" @click="closeBlock()">
       <TablerIcon name="x" :size="18" />
     </button>
-    <input type="button" :value="t('enjoyAndReview.description')" @click="openStore()" />
+    <HeroButton class="review-action" variant="primary" @click="openStore()">
+      {{ t('enjoyAndReview.description') }}
+    </HeroButton>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ import { StorageParams } from '../storage/storage-params';
 import { addDays, startOfToday } from 'date-fns';
 import { addHours } from 'date-fns/esm';
 import { CHROME_STORE_REVIEW_URL, EDGE_STORE_REVIEW_URL } from '../utils/chrome-url';
+import HeroButton from './HeroButton.vue';
 import TablerIcon from './TablerIcon.vue';
 
 const { t } = useI18n();
@@ -80,7 +83,7 @@ async function openStore() {
   box-shadow: var(--hero-shadow-md);
   backdrop-filter: blur(12px);
 }
-.review-block input[type='button'] {
+.review-action {
   margin: 0 20px 0 0;
   float: right;
   width: auto;

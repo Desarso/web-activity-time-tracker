@@ -11,9 +11,8 @@ export function getStringTab(tab: SettingsTab) {
     case SettingsTab.GeneralSettings:
       return 'settings';
     case SettingsTab.About:
-      return 'about';
     case SettingsTab.Donate:
-      return 'donation';
+      return 'dashboard';
     case SettingsTab.Limits:
       return 'limits';
     case SettingsTab.WhiteList:
@@ -36,7 +35,7 @@ export function getEnumValueTab(tab: string) {
     case 'settings':
       return SettingsTab.GeneralSettings;
     case 'about':
-      return SettingsTab.About;
+      return SettingsTab.Dashboard;
     case 'limits':
       return SettingsTab.Limits;
     case 'whitelist':
@@ -46,6 +45,6 @@ export function getEnumValueTab(tab: string) {
     case 'pomodoro':
       return SettingsTab.Pomodoro;
     case 'donation':
-      return SettingsTab.Donate;
+      return SettingsTab.Dashboard;
   }
 }

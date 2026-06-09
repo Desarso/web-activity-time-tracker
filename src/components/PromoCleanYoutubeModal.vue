@@ -16,9 +16,9 @@
         <li>✅ {{ t('cleanYoutube_features3.message') }}</li>
         <li>✅ {{ t('cleanYoutube_features4.message') }}</li>
       </ul>
-      <div class="text-center">
-        <input type="button" :value="t('try.message')" @click="openUrl()" />
-        <input type="button" class="info ml-10" :value="t('close.message')" @click="close()" />
+      <div class="text-center actions">
+        <HeroButton variant="primary" @click="openUrl()">{{ t('try.message') }}</HeroButton>
+        <HeroButton variant="secondary" @click="close()">{{ t('close.message') }}</HeroButton>
       </div>
     </div>
   </div>
@@ -32,6 +32,7 @@ import { StorageParams } from '../storage/storage-params';
 import { addDays, startOfToday } from 'date-fns';
 import { addHours } from 'date-fns/esm';
 import { CHROME_STORE_CLEAR_YOUTUBE_URL } from '../utils/chrome-url';
+import HeroButton from './HeroButton.vue';
 
 const { t } = useI18n();
 const settingsStorage = injectStorage();
@@ -94,5 +95,11 @@ ul,
 img {
   max-width: 100%;
   height: auto;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 </style>

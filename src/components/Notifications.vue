@@ -1,19 +1,12 @@
 <template>
   <div>
     <div class="settings-item">
-      <label class="setting-header">
-        <input
-          type="checkbox"
-          class="filled-in"
-          id="blockDeferral"
-          v-model="showDailyNotification"
-          @change="onChange(StorageParams.DAILY_NOTIFICATION, $event.target)"
-        />
-        <span>{{ t('showDailyNotification.message') }}</span>
-        <p class="description">
-          {{ t('showDailyNotification.description') }}
-        </p>
-      </label>
+      <HeroCheckbox
+        v-model="showDailyNotification"
+        :label="t('showDailyNotification.message')"
+        :description="t('showDailyNotification.description')"
+        @change="save(StorageParams.DAILY_NOTIFICATION, $event)"
+      />
     </div>
     <div class="settings-item">
       <p class="setting-header d-inline-block">
@@ -38,19 +31,19 @@
       <p class="description">
         {{ t('notificationMessage.description') }}
       </p>
-      <input
-        type="text"
-        class=""
+      <div class="notification-message-row">
+        <HeroInput
         :placeholder="t('enterNotification.message')"
         v-model="notificationMessage"
-      />
-      <input
-        type="button"
-        class="d-inline-block small-btn ml-10 width"
-        :value="t('save.message')"
-        :disabled="notificationMessage == ''"
-        @click="saveNotificationMessage()"
-      />
+        />
+        <HeroButton
+          variant="primary"
+          :disabled="notificationMessage == ''"
+          @click="saveNotificationMessage()"
+        >
+          {{ t('save.message') }}
+        </HeroButton>
+      </div>
     </div>
   </div>
 </template>
@@ -73,10 +66,12 @@ import {
 import { convertHHMMToSeconds, convertSecondsToHHMM } from '../utils/converter';
 import { Time } from '../utils/time';
 import ListWithTimeComponent from '../components/ListWithTime.vue';
-import PromoClearYouTube from '../components/PromoClearYouTube.vue';
 import { ListWithTime } from '../utils/enums';
 import Browser from 'webextension-polyfill';
 import { Messages } from '../utils/messages';
+import HeroButton from './HeroButton.vue';
+import HeroCheckbox from './HeroCheckbox.vue';
+import HeroInput from './HeroInput.vue';
 
 const { t } = useI18n();
 
@@ -122,10 +117,6 @@ async function handleDate(modelData: Time) {
   }
 }
 
-async function onChange(storageParam: StorageParams, target: any) {
-  if (target != null) await save(storageParam, target.checked);
-}
-
 async function save(storageParam: StorageParams, value: any) {
   if (value != undefined) await settingsStorage.saveValue(storageParam, value);
 }
@@ -136,7 +127,11 @@ async function save(storageParam: StorageParams, value: any) {
   width: 120px;
   margin: 0 15px;
 }
-.width {
-  width: 540px;
+.notification-message-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  max-width: 650px;
 }
 </style>

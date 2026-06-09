@@ -3,11 +3,9 @@
     <p>{{ t('pomodoroIsEnabled.message') }}</p>
     <span v-if="isWorkingTime">{{ t('pomodoroWork.message') }}</span>
     <span v-if="!isWorkingTime">{{ t('pomodoroRest.message') }}</span>
-    <input
-      type="button"
-      :value="t('pomodoroSettings.message')"
-      @click="openPage(SettingsTab.Pomodoro)"
-    />
+    <HeroButton class="settings-action" variant="primary" size="sm" @click="openPage(SettingsTab.Pomodoro)">
+      {{ t('pomodoroSettings.message') }}
+    </HeroButton>
   </div>
 </template>
 
@@ -25,6 +23,7 @@ import { injectStorage } from '../storage/inject-storage';
 import { openPage } from '../utils/open-page';
 import { SettingsTab } from '../utils/enums';
 import { checkPomodoro } from '../functions/pomodoro';
+import HeroButton from './HeroButton.vue';
 
 const { t } = useI18n();
 const settingsStorage = injectStorage();
@@ -74,7 +73,7 @@ onMounted(async () => {
   font-weight: 850;
   font-size: 13px;
 }
-.pomodoro-popup-block input[type='button'] {
+.settings-action {
   float: right;
 }
 </style>
