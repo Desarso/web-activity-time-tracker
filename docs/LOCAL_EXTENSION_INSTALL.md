@@ -100,12 +100,13 @@ Hosted backend deployment notes live in `docs/TRACKER_BACKEND_DEPLOYMENT.md`.
 
 ## Google Login
 
-Two IDs matter here:
+Three IDs can matter here:
 
 - Extension ID: `bkiifobeblghdofgfbpakgoknebdkeec`
-- OAuth client ID: the Google-created value ending in `.apps.googleusercontent.com`
+- Chrome Extension OAuth client ID: used by Chrome's extension identity API
+- Web OAuth client ID: used by Brave's `launchWebAuthFlow` fallback
 
-Before sign-in works, create a Google OAuth client for the local extension:
+Before Chrome sign-in works, create a Google OAuth client for the local extension:
 
 1. In Google Cloud Console, open APIs & Services.
 2. Configure the OAuth consent screen for a personal/internal test app.
@@ -114,16 +115,33 @@ Before sign-in works, create a Google OAuth client for the local extension:
 5. Rebuild with `VITE_GOOGLE_OAUTH_CLIENT_ID=<client-id>`.
 6. Reload the unpacked extension in every browser.
 
+Brave does not reliably use the same Chrome Extension identity flow. For Brave,
+also create an OAuth client with Application type `Web application` and add this
+authorized redirect URI:
+
+```text
+https://bkiifobeblghdofgfbpakgoknebdkeec.chromiumapp.org/google
+```
+
+Then build with both IDs:
+
+```bash
+VITE_GOOGLE_OAUTH_CLIENT_ID=chrome-extension-client.apps.googleusercontent.com \
+VITE_GOOGLE_WEB_OAUTH_CLIENT_ID=web-client.apps.googleusercontent.com \
+corepack pnpm@8.15.9 exec vite build --mode development
+```
+
 Recommended Console URL if using the existing auth project:
 
 ```text
 https://console.cloud.google.com/auth/clients?project=gabrielmalekoauth
 ```
 
-Pass the same client ID to the backend. If you later create different clients for browser variants, pass all client IDs as a comma-separated list:
+Pass every accepted client ID to the backend. If you create Chrome and Brave
+clients, pass both IDs as a comma-separated list:
 
 ```bash
-GOOGLE_OAUTH_CLIENT_IDS=chrome-client.apps.googleusercontent.com,edge-client.apps.googleusercontent.com
+GOOGLE_OAUTH_CLIENT_IDS=chrome-extension-client.apps.googleusercontent.com,web-client.apps.googleusercontent.com
 ```
 
 The source manifest keeps a placeholder client ID on purpose. The Vite build replaces it in `dist/manifest.json` when `VITE_GOOGLE_OAUTH_CLIENT_ID` is set.

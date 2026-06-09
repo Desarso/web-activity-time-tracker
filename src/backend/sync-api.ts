@@ -50,10 +50,11 @@ export async function signInWithGoogle(): Promise<SyncSession> {
 
 async function getGoogleAccessToken(): Promise<string> {
   const identity = Browser.identity as IdentityWithGoogleAuth;
-  const googleClientId = getGoogleClientId();
+  const googleClientId = getGoogleExtensionClientId();
+  let chromeAuthError: unknown;
 
   if (isPlaceholderGoogleClientId(googleClientId)) {
-    throw new Error(getGoogleOAuthSetupMessage());
+    throw new Error(getGoogleOAuthSetupMessage('Chrome sign-in'));
   }
 
   if (identity?.getAuthToken) {
@@ -65,34 +66,42 @@ async function getGoogleAccessToken(): Promise<string> {
       const accessToken = typeof tokenResult === 'string' ? tokenResult : tokenResult?.token;
       if (accessToken) return accessToken;
     } catch (error) {
-      throw normalizeGoogleAuthError(error);
+      chromeAuthError = error;
     }
   }
 
   if (!identity?.launchWebAuthFlow || !identity?.getRedirectURL) {
+    if (chromeAuthError) throw normalizeGoogleAuthError(chromeAuthError);
     throw new Error('This browser does not expose an extension identity API.');
   }
 
+  const webClientId = getGoogleWebClientId();
+  if (isPlaceholderGoogleClientId(webClientId)) {
+    if (chromeAuthError) throw normalizeGoogleAuthError(chromeAuthError);
+    throw new Error(getGoogleOAuthSetupMessage('Brave sign-in'));
+  }
+
   const redirectUri = identity.getRedirectURL('google');
+  const state = createOAuthState();
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-  authUrl.searchParams.set('client_id', googleClientId);
+  authUrl.searchParams.set('client_id', webClientId);
   authUrl.searchParams.set('redirect_uri', redirectUri);
   authUrl.searchParams.set('response_type', 'token');
   authUrl.searchParams.set('scope', GOOGLE_SCOPES.join(' '));
   authUrl.searchParams.set('prompt', 'select_account');
+  authUrl.searchParams.set('state', state);
 
   const redirectUrl = await identity.launchWebAuthFlow({
     interactive: true,
     url: authUrl.toString(),
   });
-  const accessToken = new URL(redirectUrl).hash
-    .slice(1)
-    .split('&')
-    .map(part => part.split('='))
-    .find(([key]) => key === 'access_token')?.[1];
+  const redirectHash = new URL(redirectUrl).hash.slice(1);
+  const redirectParams = new URLSearchParams(redirectHash);
+  if (redirectParams.get('state') !== state) throw new Error('Google sign-in returned an invalid state.');
+  const accessToken = redirectParams.get('access_token');
 
   if (!accessToken) throw new Error('Google did not return an access token.');
-  return decodeURIComponent(accessToken);
+  return accessToken;
 }
 
 export async function signOutOfSync(): Promise<void> {
@@ -156,16 +165,26 @@ async function buildSnapshot(): Promise<SyncSnapshot> {
   };
 }
 
-function getGoogleClientId(): string {
+function getGoogleExtensionClientId(): string {
   return String((Browser.runtime.getManifest() as { oauth2?: { client_id?: string } }).oauth2?.client_id || '');
+}
+
+function getGoogleWebClientId(): string {
+  return String(import.meta.env.VITE_GOOGLE_WEB_OAUTH_CLIENT_ID || '');
 }
 
 function isPlaceholderGoogleClientId(clientId: string): boolean {
   return !clientId || clientId.startsWith('REPLACE_WITH_') || clientId.includes('your-client-id');
 }
 
-function getGoogleOAuthSetupMessage(): string {
-  return `Google sign-in needs an OAuth client for extension ID ${getExtensionId()}. Set VITE_GOOGLE_OAUTH_CLIENT_ID, rebuild, reload the extension, and include the same client ID in GOOGLE_OAUTH_CLIENT_IDS for the backend.`;
+function getGoogleOAuthSetupMessage(flowName = 'Google sign-in'): string {
+  const redirectUri = `https://${getExtensionId()}.chromiumapp.org/google`;
+  return `${flowName} needs Google OAuth configured for extension ID ${getExtensionId()}. Set VITE_GOOGLE_OAUTH_CLIENT_ID for Chrome. For Brave, also set VITE_GOOGLE_WEB_OAUTH_CLIENT_ID to a Web client that allows redirect URI ${redirectUri}. Include every client ID in GOOGLE_OAUTH_CLIENT_IDS for the backend, rebuild, and reload the extension.`;
+}
+
+function createOAuthState(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  return Math.random().toString(36).slice(2);
 }
 
 function normalizeGoogleAuthError(error: unknown): Error {
