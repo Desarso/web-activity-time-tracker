@@ -21,6 +21,7 @@ type IdentityWithGoogleAuth = typeof Browser.identity & {
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile'];
 const storage = injectStorage();
+let activeGoogleSignIn: Promise<SyncSession> | null = null;
 
 export async function getStoredSession(): Promise<SyncSession | null> {
   const token = await storage.getValue(StorageParams.SYNC_SESSION_TOKEN, '');
@@ -34,6 +35,17 @@ export async function getStoredSession(): Promise<SyncSession | null> {
 }
 
 export async function signInWithGoogle(): Promise<SyncSession> {
+  if (activeGoogleSignIn) return activeGoogleSignIn;
+
+  activeGoogleSignIn = runGoogleSignIn();
+  try {
+    return await activeGoogleSignIn;
+  } finally {
+    activeGoogleSignIn = null;
+  }
+}
+
+async function runGoogleSignIn(): Promise<SyncSession> {
   const accessToken = await getGoogleAccessToken();
 
   const session = await requestJson<SyncSession>('/api/auth/google', {
@@ -51,13 +63,14 @@ export async function signInWithGoogle(): Promise<SyncSession> {
 async function getGoogleAccessToken(): Promise<string> {
   const identity = Browser.identity as IdentityWithGoogleAuth;
   const googleClientId = getGoogleExtensionClientId();
+  const shouldUseWebAuthFlow = await shouldUseGoogleWebAuthFlow();
   let chromeAuthError: unknown;
 
   if (isPlaceholderGoogleClientId(googleClientId)) {
     throw new Error(getGoogleOAuthSetupMessage('Chrome sign-in'));
   }
 
-  if (identity?.getAuthToken) {
+  if (!shouldUseWebAuthFlow && identity?.getAuthToken) {
     try {
       const tokenResult = await identity.getAuthToken({
         interactive: true,
@@ -171,6 +184,17 @@ function getGoogleExtensionClientId(): string {
 
 function getGoogleWebClientId(): string {
   return String(import.meta.env.VITE_GOOGLE_WEB_OAUTH_CLIENT_ID || '');
+}
+
+async function shouldUseGoogleWebAuthFlow(): Promise<boolean> {
+  const identity = Browser.identity as IdentityWithGoogleAuth;
+  const maybeNavigator = navigator as Navigator & {
+    brave?: {
+      isBrave?: () => Promise<boolean>;
+    };
+  };
+  if (await maybeNavigator.brave?.isBrave?.().catch(() => false)) return true;
+  return Boolean(getGoogleWebClientId()) && !identity.getAuthToken;
 }
 
 function isPlaceholderGoogleClientId(clientId: string): boolean {
