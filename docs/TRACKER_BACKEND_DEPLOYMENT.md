@@ -11,15 +11,18 @@ https://tracker.gabrielmalek.com
 - Domain: `gabrielmalek.com`
 - DNS provider: Cloudflare
 - Authoritative nameservers checked on 2026-06-08: `ulla.ns.cloudflare.com`, `kyree.ns.cloudflare.com`
-- Record created on 2026-06-08:
+- Record created on 2026-06-08 and proxied on 2026-06-08 after the backend was
+  verified through Cloudflare:
 
 ```text
 A tracker.gabrielmalek.com -> 108.192.171.10
 TTL: Auto
-Proxied: false
+Proxied: true
 ```
 
-`coolify.gabrielmalek.com` points to the same host. Keep `tracker.gabrielmalek.com` unproxied unless the backend is explicitly tested behind Cloudflare proxy.
+`coolify.gabrielmalek.com` points to the same host. The Tracker record is
+proxied so local browsers do not need to hairpin through the home router to
+reach the public IP while on the LAN.
 
 Cloudflare credentials are stored locally in `~/.secrets/keys.json` under `cloudflare.api_key`. That key is a legacy global API key shape, not a Bearer token, so Cloudflare API calls require:
 
@@ -35,12 +38,29 @@ Do not commit the account email or API key into this repo.
 - Target Coolify: `https://coolify.gabrielmalek.com`
 - API secret key name: `coolify-gabrielmalek`
 - Server listed by Coolify: `southgate`
+- Server UUID: `hco0w0ogo0ck84swoc88w0so`
+- Project: `Server`
+- Project UUID: `d0gkcck`
+- Environment: `production`
+- Environment UUID: `kgss08gk04oo04gwcs8o8sg8`
+- Docker destination UUID: `lk4kw4g04w0ggooogw80go08`
+- Application name: `Tracker Backend`
+- Application UUID: `so0hrkmaa2sk5l77lp44mnzw`
 - Public backend URL: `https://tracker.gabrielmalek.com`
 - Dockerfile: repo root `Dockerfile`
 - Container port: `8787`
 - Persistent data path: `/data`
+- Persistent storage name: `so0hrkmaa2sk5l77lp44mnzw-tracker-data`
+- Persistent storage UUID: `a1ssnsfb2lvw7r214f97a9hq`
 - Git repository: `https://github.com/Desarso/web-activity-time-tracker`
 - Current working branch: `codex/local-sync-extension-install`
+- Last verified deployment: 2026-06-08, commit `c5842beb9142091829e40c4de9a96bb981fda08d`
+
+The backend was verified from an external host at:
+
+```text
+GET https://tracker.gabrielmalek.com/api/health -> 200
+```
 
 Manual Coolify setup:
 
