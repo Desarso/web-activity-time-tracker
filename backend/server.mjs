@@ -54,7 +54,8 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/auth/google') {
-      return handleGoogleAuth(req, res);
+      await handleGoogleAuth(req, res);
+      return;
     }
 
     if (req.method === 'GET' && url.pathname === '/api/me') {
@@ -64,7 +65,8 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'POST' && url.pathname === '/api/sync/snapshot') {
       const user = requireUser(req);
-      return handleSnapshot(req, res, user.userId);
+      await handleSnapshot(req, res, user.userId);
+      return;
     }
 
     if (req.method === 'GET' && url.pathname === '/api/activity') {
