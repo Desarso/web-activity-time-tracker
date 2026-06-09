@@ -24,7 +24,7 @@ function generateManifest(mode: string, env: Record<string, string>) {
   const extensionPublicKey =
     env.VITE_EXTENSION_PUBLIC_KEY ||
     env.EXTENSION_PUBLIC_KEY ||
-    (mode === 'development' ? LOCAL_DEV_EXTENSION_PUBLIC_KEY : '');
+    LOCAL_DEV_EXTENSION_PUBLIC_KEY;
 
   return {
     name: pkg.name,
